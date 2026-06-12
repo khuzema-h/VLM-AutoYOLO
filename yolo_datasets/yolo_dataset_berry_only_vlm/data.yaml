@@ -1,0 +1,6 @@
+path: /home/khuzema/VLM-AutoYOLO/yolo_datasets/yolo_dataset_berry_only_vlm
+train: images/train
+val: images/test
+test: images/test
+names:
+  0: Berry

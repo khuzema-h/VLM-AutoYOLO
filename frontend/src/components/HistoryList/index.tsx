@@ -1,3 +1,5 @@
+import { Popconfirm } from "antd";
+
 interface Props {
   allItems: Detection[];
   total: number;
@@ -5,6 +7,7 @@ interface Props {
   isFetchingNextPage: boolean;
   fetchNextPage: () => void;
   onSelect: (det: Detection) => void;
+  onClearAll?: () => void;
 }
 
 export function HistoryList({
@@ -14,9 +17,11 @@ export function HistoryList({
   isFetchingNextPage,
   fetchNextPage,
   onSelect,
+  onClearAll,
 }: Props) {
   const { t } = useTranslation();
   const deleteMut = useDeleteDetectionMutation();
+  const clearAllMut = useDeleteAllDetectionsMutation(onClearAll);
   const list = useMemo(() => allItems, [allItems]);
   const [loadingAll, handleLoadAll] = useLoadAll(fetchNextPage);
 
@@ -208,6 +213,24 @@ export function HistoryList({
             <p className="text-xs text-center text-gray-300 py-1">{t("historyList.allLoaded")}</p>
           ) : null}
         </div>
+      )}
+
+      {list.length > 0 && (
+        <Popconfirm
+          title={t("historyList.clearAllConfirm", { count: total })}
+          onConfirm={() => clearAllMut.mutate()}
+          okText={t("common.delete")}
+          cancelText={t("common.cancel")}
+          okButtonProps={{ danger: true }}
+        >
+          <button
+            type="button"
+            disabled={clearAllMut.isPending}
+            className="w-full rounded border border-red-200 bg-red-50 py-1.5 text-[11px] font-semibold text-red-500 hover:bg-red-100 transition-colors disabled:opacity-50"
+          >
+            {t("historyList.clearAll")} ({total})
+          </button>
+        </Popconfirm>
       )}
 
     </div>

@@ -15,6 +15,15 @@ declare global {
   const CANVAS_MIN_BOX_SIZE: typeof import('./lib/constants').CANVAS_MIN_BOX_SIZE
   const CandidateListItem: typeof import('./components/Training/CandidateListItem/index').CandidateListItem
   const CategoryInput: typeof import('./components/CategoryInput/index').CategoryInput
+  const CompareConfigPanel: typeof import('./components/Compare/CompareConfigPanel').CompareConfigPanel
+  const CompareImageList: typeof import('./components/Compare/CompareImageList').CompareImageList
+  const CompareLabelMapping: typeof import('./components/Compare/CompareLabelMapping').CompareLabelMapping
+  const CompareMain: typeof import('./components/Compare/CompareMain').CompareMain
+  const CompareProvider: typeof import('./components/Compare/CompareContext').CompareProvider
+  const CompareReportCases: typeof import('./components/Compare/CompareReportCases').CompareReportCases
+  const CompareReportPanel: typeof import('./components/Compare/CompareReportPanel').CompareReportPanel
+  const CompareSidebar: typeof import('./components/Compare/CompareSidebar').CompareSidebar
+  const CompareView: typeof import('./components/Compare/CompareView').CompareView
   const DEFAULT_BATCH: typeof import('./lib/constants').DEFAULT_BATCH
   const DEFAULT_CONF: typeof import('./lib/constants').DEFAULT_CONF
   const DEFAULT_EPOCHS: typeof import('./lib/constants').DEFAULT_EPOCHS
@@ -41,10 +50,12 @@ declare global {
   const KeyframeGrid: typeof import('./components/KeyframeGrid/index').KeyframeGrid
   const Layout: typeof import('./components/Layout/index').Layout
   const MAX_UPLOAD_SIZE_MB: typeof import('./lib/constants').MAX_UPLOAD_SIZE_MB
+  const MetricLink: typeof import('./components/Compare/CompareReportCases').MetricLink
   const ModelSelector: typeof import('./components/ModelSelector/index').ModelSelector
   const ModelStatus: typeof import('./components/ModelStatus/index').ModelStatus
   const QueryClient: typeof import('@tanstack/react-query').QueryClient
   const QueryClientProvider: typeof import('@tanstack/react-query').QueryClientProvider
+  const REPORT_TIMEOUT: typeof import('./services/request').REPORT_TIMEOUT
   const ResultTable: typeof import('./components/ResultTable/index').ResultTable
   const Sam3Status: typeof import('./components/Sam3Status/index').Sam3Status
   const Sidebar: typeof import('./components/Sidebar/index').Sidebar
@@ -65,15 +76,23 @@ declare global {
   const VideoValidator: typeof import('./components/VideoValidator/index').VideoValidator
   const addBox: typeof import('./services/api').addBox
   const applyFilter: typeof import('./lib/filterBoxes').applyFilter
+  const autoMapByName: typeof import('./lib/compareLabelMap').autoMapByName
   const batchFileMap: typeof import('./lib/cache').batchFileMap
+  const buildCompareReportHtml: typeof import('./lib/compareReportHtml').buildCompareReportHtml
+  const buildReportThumbnails: typeof import('./lib/compareReportThumbnails').buildReportThumbnails
   const cache: typeof import('react').cache
   const cacheSignal: typeof import('react').cacheSignal
+  const cancelComparePrecompute: typeof import('./services/api').cancelComparePrecompute
   const cancelImport: typeof import('./services/api').cancelImport
   const cancelTrainingJob: typeof import('./services/api').cancelTrainingJob
+  const caseFilterLabel: typeof import('./lib/compareReportCases').caseFilterLabel
   const chartUrl: typeof import('./services/api').chartUrl
   const checkSam3Health: typeof import('./services/api').checkSam3Health
+  const clearCompareVlmCache: typeof import('./services/api').clearCompareVlmCache
+  const compareImageUrl: typeof import('./services/api').compareImageUrl
   const createContext: typeof import('react').createContext
   const createRef: typeof import('react').createRef
+  const deleteAllDetections: typeof import('./services/api').deleteAllDetections
   const deleteAllVideos: typeof import('./services/api').deleteAllVideos
   const deleteBox: typeof import('./services/api').deleteBox
   const deleteDetection: typeof import('./services/api').deleteDetection
@@ -81,17 +100,24 @@ declare global {
   const deleteVideo: typeof import('./services/api').deleteVideo
   const detectImage: typeof import('./services/api').detectImage
   const downloadBlob: typeof import('./services/api').downloadBlob
+  const downloadCompareReportHtml: typeof import('./lib/compareReportHtml').downloadCompareReportHtml
   const downloadDatasetUrl: typeof import('./services/api').downloadDatasetUrl
   const downloadModelUrl: typeof import('./services/api').downloadModelUrl
   const downloadOnnxUrl: typeof import('./services/api').downloadOnnxUrl
   const downloadYoloTxt: typeof import('./lib/yoloExport').downloadYoloTxt
   const exportBatch: typeof import('./services/api').exportBatch
+  const exportCompareVlmDataset: typeof import('./services/api').exportCompareVlmDataset
   const exportSingleUrl: typeof import('./services/api').exportSingleUrl
   const extractKeyframes: typeof import('./services/api').extractKeyframes
+  const fetchAnnotations: typeof import('./services/api').fetchAnnotations
+  const fetchCompareDatasets: typeof import('./services/api').fetchCompareDatasets
+  const fetchCompareReport: typeof import('./services/api').fetchCompareReport
+  const fetchDatasetImages: typeof import('./services/api').fetchDatasetImages
   const fetchImportProgress: typeof import('./services/api').fetchImportProgress
   const fetchTrainingJobs: typeof import('./services/api').fetchTrainingJobs
   const fetchYoloSeries: typeof import('./services/api').fetchYoloSeries
   const fileUrlCache: typeof import('./lib/cache').fileUrlCache
+  const filterReportCases: typeof import('./lib/compareReportCases').filterReportCases
   const formatTime: typeof import('./lib/formatTime').formatTime
   const forwardRef: typeof import('react').forwardRef
   const generateYoloTxt: typeof import('./lib/yoloExport').generateYoloTxt
@@ -108,13 +134,17 @@ declare global {
   const lazy: typeof import('react').lazy
   const listDetections: typeof import('./services/api').listDetections
   const listVideos: typeof import('./services/api').listVideos
+  const mapVlmBoxClass: typeof import('./lib/compareLabelMap').mapVlmBoxClass
+  const mapVlmBoxes: typeof import('./lib/compareLabelMap').mapVlmBoxes
   const memo: typeof import('react').memo
+  const mergeLabelMap: typeof import('./lib/compareLabelMap').mergeLabelMap
   const optimisticModelLoading: typeof import('./hooks/useModelEvents').optimisticModelLoading
   const optimisticModelUnloaded: typeof import('./hooks/useModelEvents').optimisticModelUnloaded
   const parseCategories: typeof import('./lib/parsers').parseCategories
   const renameTrainingJob: typeof import('./services/api').renameTrainingJob
   const request: typeof import('./services/request').request
   const saveFilterSettings: typeof import('./services/api').saveFilterSettings
+  const startComparePrecompute: typeof import('./services/api').startComparePrecompute
   const startTraining: typeof import('./services/api').startTraining
   const startTransition: typeof import('react').startTransition
   const toast: typeof import('react-hot-toast').toast
@@ -132,6 +162,8 @@ declare global {
   const useBoolean: typeof import('ahooks').useBoolean
   const useCallback: typeof import('react').useCallback
   const useClickAway: typeof import('ahooks').useClickAway
+  const useCompareContext: typeof import('./components/Compare/CompareContext').useCompareContext
+  const useCompareDataset: typeof import('./hooks/useCompareDataset').useCompareDataset
   const useContext: typeof import('react').useContext
   const useControllableValue: typeof import('ahooks').useControllableValue
   const useCookieState: typeof import('ahooks').useCookieState
@@ -145,6 +177,7 @@ declare global {
   const useDeepCompareEffect: typeof import('ahooks').useDeepCompareEffect
   const useDeepCompareLayoutEffect: typeof import('ahooks').useDeepCompareLayoutEffect
   const useDeferredValue: typeof import('react').useDeferredValue
+  const useDeleteAllDetectionsMutation: typeof import('./hooks/useDetection').useDeleteAllDetectionsMutation
   const useDeleteDetectionMutation: typeof import('./hooks/useDetection').useDeleteDetectionMutation
   const useDetectMutation: typeof import('./hooks/useDetection').useDetectMutation
   const useDetectionAnnotation: typeof import('./hooks/useDetectionAnnotation').useDetectionAnnotation
@@ -240,9 +273,13 @@ declare global {
   const useWebSocket: typeof import('ahooks').useWebSocket
   const useWhyDidYouUpdate: typeof import('ahooks').useWhyDidYouUpdate
   const useYoloValidation: typeof import('./hooks/useYoloValidation').useYoloValidation
+  const vlmLabelsForGtClass: typeof import('./lib/compareLabelMap').vlmLabelsForGtClass
 }
 // for type re-export
 declare global {
+  // @ts-ignore
+  export type { CompareDatasetContextValue } from './hooks/useCompareDataset'
+  import('./hooks/useCompareDataset')
   // @ts-ignore
   export type { ThemeMode, ThemeContextValue } from './hooks/useTheme'
   import('./hooks/useTheme')
@@ -253,10 +290,16 @@ declare global {
   export type { SidebarProps } from './components/Sidebar/index'
   import('./components/Sidebar/index')
   // @ts-ignore
+  export type { CompareLabelMap } from './lib/compareLabelMap'
+  import('./lib/compareLabelMap')
+  // @ts-ignore
+  export type { CaseFilterKind, CaseFilter } from './lib/compareReportCases'
+  import('./lib/compareReportCases')
+  // @ts-ignore
   export type { FilterMode } from './lib/filterBoxes'
   import('./lib/filterBoxes')
   // @ts-ignore
-  export type { YoloSeries, ImportResult, ImportProgress, ChunkInitResult } from './services/api'
+  export type { YoloSeries, ImportResult, ImportProgress, ChunkInitResult, CompareDataset, CompareImage, PrecomputeTaskStatus, DatasetImagesResponse, CompareBox, CompareAnnotationsResponse, ExportVlmDatasetResult, CompareReportMetrics, CompareReportClassStat, CompareReportSplitStat, CompareReportImageClassStat, CompareReportImageStat, CompareReportResponse } from './services/api'
   import('./services/api')
   // @ts-ignore
   export type { BBox, Detection, DetectResponse, TrainingJob, KeyFrame, VideoInfo, ListResponse } from './types/index'

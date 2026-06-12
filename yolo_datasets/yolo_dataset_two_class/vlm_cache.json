@@ -1,0 +1,278 @@
+{
+  "images/test/2026_05_18/20260518_144921/data_1779141350_916807000.jpg::fully ripe red strawberry::max10::conf95": [
+    {
+      "className": "fully ripe red strawberry",
+      "x1": 65,
+      "y1": 210,
+      "x2": 97,
+      "y2": 235,
+      "confidence": null
+    },
+    {
+      "className": "fully ripe red strawberry",
+      "x1": 67,
+      "y1": 239,
+      "x2": 96,
+      "y2": 266,
+      "confidence": null
+    },
+    {
+      "className": "fully ripe red strawberry",
+      "x1": 81,
+      "y1": 297,
+      "x2": 113,
+      "y2": 311,
+      "confidence": null
+    },
+    {
+      "className": "fully ripe red strawberry",
+      "x1": 136,
+      "y1": 153,
+      "x2": 163,
+      "y2": 177,
+      "confidence": null
+    },
+    {
+      "className": "fully ripe red strawberry",
+      "x1": 261,
+      "y1": 416,
+      "x2": 297,
+      "y2": 448,
+      "confidence": null
+    },
+    {
+      "className": "fully ripe red strawberry",
+      "x1": 983,
+      "y1": 301,
+      "x2": 1015,
+      "y2": 331,
+      "confidence": null
+    }
+  ],
+  "images/test/2026_04_27/20260427_133912/data_1777322386_745921000.jpg::max10::conf95": [
+    {
+      "className": "Berry",
+      "x1": 117,
+      "y1": 533,
+      "x2": 144,
+      "y2": 554,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 145,
+      "y1": 159,
+      "x2": 162,
+      "y2": 180,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 363,
+      "y1": 294,
+      "x2": 392,
+      "y2": 317,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 388,
+      "y1": 436,
+      "x2": 406,
+      "y2": 454,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 403,
+      "y1": 288,
+      "x2": 420,
+      "y2": 306,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 524,
+      "y1": 141,
+      "x2": 542,
+      "y2": 156,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 601,
+      "y1": 70,
+      "x2": 622,
+      "y2": 90,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 794,
+      "y1": 103,
+      "x2": 816,
+      "y2": 122,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 808,
+      "y1": 567,
+      "x2": 849,
+      "y2": 603,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 822,
+      "y1": 498,
+      "x2": 851,
+      "y2": 520,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 841,
+      "y1": 226,
+      "x2": 867,
+      "y2": 250,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 842,
+      "y1": 448,
+      "x2": 875,
+      "y2": 479,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 848,
+      "y1": 129,
+      "x2": 871,
+      "y2": 156,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 892,
+      "y1": 124,
+      "x2": 913,
+      "y2": 144,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 897,
+      "y1": 581,
+      "x2": 920,
+      "y2": 603,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 914,
+      "y1": 500,
+      "x2": 931,
+      "y2": 516,
+      "confidence": null
+    },
+    {
+      "className": "Berry",
+      "x1": 1069,
+      "y1": 38,
+      "x2": 1082,
+      "y2": 52,
+      "confidence": null
+    },
+    {
+      "className": "Red Leaf",
+      "x1": 0,
+      "y1": 210,
+      "x2": 159,
+      "y2": 445,
+      "confidence": null
+    },
+    {
+      "className": "Red Leaf",
+      "x1": 0,
+      "y1": 550,
+      "x2": 38,
+      "y2": 604,
+      "confidence": null
+    },
+    {
+      "className": "Red Leaf",
+      "x1": 69,
+      "y1": 58,
+      "x2": 227,
+      "y2": 189,
+      "confidence": null
+    },
+    {
+      "className": "Red Leaf",
+      "x1": 271,
+      "y1": 173,
+      "x2": 417,
+      "y2": 309,
+      "confidence": null
+    },
+    {
+      "className": "Red Leaf",
+      "x1": 276,
+      "y1": 0,
+      "x2": 437,
+      "y2": 108,
+      "confidence": null
+    },
+    {
+      "className": "Red Leaf",
+      "x1": 750,
+      "y1": 0,
+      "x2": 975,
+      "y2": 154,
+      "confidence": null
+    },
+    {
+      "className": "Red Leaf",
+      "x1": 814,
+      "y1": 174,
+      "x2": 1024,
+      "y2": 388,
+      "confidence": null
+    },
+    {
+      "className": "Red Leaf",
+      "x1": 831,
+      "y1": 396,
+      "x2": 1102,
+      "y2": 648,
+      "confidence": null
+    },
+    {
+      "className": "Red Leaf",
+      "x1": 992,
+      "y1": 0,
+      "x2": 1149,
+      "y2": 27,
+      "confidence": null
+    },
+    {
+      "className": "Red Leaf",
+      "x1": 1049,
+      "y1": 91,
+      "x2": 1152,
+      "y2": 240,
+      "confidence": null
+    },
+    {
+      "className": "Red Leaf",
+      "x1": 1121,
+      "y1": 295,
+      "x2": 1152,
+      "y2": 352,
+      "confidence": null
+    }
+  ]
+}

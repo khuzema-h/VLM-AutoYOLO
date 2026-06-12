@@ -1,0 +1,6 @@
+path: /home/server/lerobot_arvind/yolo_datasets/yolo_dataset_berry_only
+train: images/train
+val: images/test
+test: images/test
+names:
+  0: Berry

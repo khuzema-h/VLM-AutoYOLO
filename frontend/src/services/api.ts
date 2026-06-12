@@ -51,6 +51,10 @@ export async function deleteDetection(id: string): Promise<void> {
   await request.post(`/detections/${id}/delete`);
 }
 
+export async function deleteAllDetections(): Promise<void> {
+  await request.post("/detections/delete-bulk");
+}
+
 export async function deleteBox(detectionId: string, boxId: string): Promise<void> {
   await request.post(`/detections/${detectionId}/boxes/${boxId}/delete`);
 }
@@ -334,3 +338,283 @@ export async function fetchImportProgress(importId: string): Promise<ImportProgr
 export async function cancelImport(importId: string): Promise<void> {
   await request.post(`/datasets/import/${importId}/cancel`);
 }
+
+// ── Dataset Comparison ────────────────────────────
+
+export interface CompareDataset {
+  name: string;
+  classes: string[];
+  hasManifest: boolean;
+  imageCount: number;
+  trainCount: number;
+  testCount: number;
+}
+
+export interface CompareImage {
+  key: string;
+  split: string;
+  imagePath: string;
+  labelPath: string;
+  hasVlmPrediction: boolean;
+}
+
+export interface PrecomputeTaskStatus {
+  status: "idle" | "running" | "completed" | "failed" | "cancelled";
+  current: number;
+  total: number;
+  currentImage: string;
+  error: string;
+}
+
+export interface DatasetImagesResponse {
+  classes: string[];
+  images: CompareImage[];
+  stats: {
+    total: number;
+    cached: number;
+    progressPercent: number;
+  };
+  precomputeTask: PrecomputeTaskStatus;
+}
+
+export interface CompareBox {
+  className: string;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  confidence?: number;
+}
+
+export interface CompareAnnotationsResponse {
+  humanBoxes: CompareBox[];
+  vlmBoxes: CompareBox[];
+  vlmCached: boolean;
+  dimensions: {
+    width: number;
+    height: number;
+  };
+}
+
+export async function fetchCompareDatasets(): Promise<CompareDataset[]> {
+  const { data } = await request.get<{ data: CompareDataset[] }>("/compare/datasets");
+  return data.data;
+}
+
+export async function fetchDatasetImages(
+  datasetName: string,
+  vlmLabels?: string[],
+  maxBBoxArea = 1,
+  minConfidence = 0,
+): Promise<DatasetImagesResponse> {
+  const params = new URLSearchParams();
+  params.set("maxBBoxArea", String(maxBBoxArea));
+  params.set("minConfidence", String(minConfidence));
+  vlmLabels?.forEach((label) => params.append("vlmLabels", label));
+  const query = params.toString();
+  const { data } = await request.get<{ data: DatasetImagesResponse }>(
+    `/compare/datasets/${datasetName}/images${query ? `?${query}` : ""}`,
+  );
+  return data.data;
+}
+
+export async function startComparePrecompute(
+  datasetName: string,
+  vlmLabels?: string[],
+  maxBBoxArea = 1,
+  minConfidence = 0,
+): Promise<{ message: string; status: string; total: number }> {
+  const { data } = await request.post<{
+    data: { message: string; status: string; total: number };
+  }>(`/compare/datasets/${datasetName}/precompute`, {
+    vlmLabels: vlmLabels ?? [],
+    maxBBoxArea,
+    minConfidence,
+  });
+  return data.data;
+}
+
+export async function cancelComparePrecompute(
+  datasetName: string
+): Promise<{ message: string; status: string }> {
+  const { data } = await request.post<{
+    data: { message: string; status: string };
+  }>(`/compare/datasets/${datasetName}/precompute/cancel`);
+  return data.data;
+}
+
+export async function clearCompareVlmCache(
+  datasetName: string,
+): Promise<{ message: string; cleared: number }> {
+  const { data } = await request.post<{
+    data: { message: string; cleared: number };
+  }>(`/compare/datasets/${datasetName}/cache/clear`);
+  return data.data;
+}
+
+export interface ExportVlmDatasetResult {
+  message: string;
+  outputPath: string;
+  outputName: string;
+  exportedImages: number;
+  skippedUncached: number;
+  totalBoxes: number;
+  classes: string[];
+}
+
+export interface CompareReportMetrics {
+  tp: number;
+  fp: number;
+  fn: number;
+  gtTotal: number;
+  vlmTotal: number;
+  unmappedVlm: number;
+  precision: number;
+  recall: number;
+  f1: number;
+  meanIou: number;
+}
+
+export interface CompareReportClassStat {
+  className: string;
+  gtCount: number;
+  vlmCount: number;
+  tp: number;
+  fp: number;
+  fn: number;
+  precision: number;
+  recall: number;
+  f1: number;
+  meanIou: number;
+}
+
+export interface CompareReportSplitStat extends CompareReportMetrics {
+  split: string;
+  images: number;
+}
+
+export interface CompareReportImageClassStat {
+  gtCount: number;
+  vlmCount: number;
+  tp: number;
+  fp: number;
+  fn: number;
+}
+
+export interface CompareReportImageStat {
+  key: string;
+  split: string;
+  imagePath: string;
+  labelPath: string;
+  tp: number;
+  fp: number;
+  fn: number;
+  unmapped: number;
+  gtCount: number;
+  vlmCount: number;
+  f1: number;
+  meanIou: number;
+  classStats: Record<string, CompareReportImageClassStat>;
+}
+
+export interface CompareReportResponse {
+  dataset: string;
+  vlmLabels: string[];
+  maxBBoxArea: number;
+  minConfidence: number;
+  iouThreshold: number;
+  labelMap: Record<string, string>;
+  imagesEvaluated: number;
+  imagesSkipped: number;
+  imagesTotal: number;
+  gtBoxTotal: number;
+  vlmBoxTotal: number;
+  unmappedVlmTotal: number;
+  avgGtBoxesPerImage: number;
+  avgVlmBoxesPerImage: number;
+  overall: {
+    global: CompareReportMetrics;
+    classStats: CompareReportClassStat[];
+  };
+  splitStats: CompareReportSplitStat[];
+  imageStats: CompareReportImageStat[];
+}
+
+export async function fetchCompareReport(
+  datasetName: string,
+  options: {
+    iouThreshold?: number;
+    vlmLabels?: string[];
+    maxBBoxArea?: number;
+    minConfidence?: number;
+    labelMap?: Record<string, string>;
+  } = {},
+): Promise<CompareReportResponse> {
+  const params = new URLSearchParams();
+  params.set("iouThreshold", String(options.iouThreshold ?? 0.5));
+  params.set("maxBBoxArea", String(options.maxBBoxArea ?? 1));
+  params.set("minConfidence", String(options.minConfidence ?? 0));
+  options.vlmLabels?.forEach((label) => params.append("vlmLabels", label));
+  if (options.labelMap && Object.keys(options.labelMap).length > 0) {
+    params.set("labelMap", JSON.stringify(options.labelMap));
+  }
+  const { data } = await request.get<{ data: CompareReportResponse }>(
+    `/compare/datasets/${datasetName}/report?${params.toString()}`,
+    { timeout: REPORT_TIMEOUT },
+  );
+  return data.data;
+}
+
+export async function exportCompareVlmDataset(
+  datasetName: string,
+  payload: {
+    outputName: string;
+    vlmLabels?: string[];
+    maxBBoxArea?: number;
+    minConfidence?: number;
+    labelMap?: Record<string, string>;
+  },
+): Promise<ExportVlmDatasetResult> {
+  const { data } = await request.post<{ data: ExportVlmDatasetResult }>(
+    `/compare/datasets/${datasetName}/export`,
+    {
+      outputName: payload.outputName,
+      vlmLabels: payload.vlmLabels ?? [],
+      maxBBoxArea: payload.maxBBoxArea ?? 1,
+      minConfidence: payload.minConfidence ?? 0,
+      labelMap: payload.labelMap ?? {},
+    },
+  );
+  return data.data;
+}
+
+export async function fetchAnnotations(
+  dataset: string,
+  imagePath: string,
+  labelPath: string,
+  runVLM = false,
+  vlmLabels?: string[],
+  maxBBoxArea = 1,
+  minConfidence = 0,
+): Promise<CompareAnnotationsResponse> {
+  const params = new URLSearchParams({
+    dataset,
+    imagePath,
+    labelPath,
+    runVLM: String(runVLM),
+    maxBBoxArea: String(maxBBoxArea),
+    minConfidence: String(minConfidence),
+  });
+  vlmLabels?.forEach((label) => params.append("vlmLabels", label));
+  const { data } = await request.get<{ data: CompareAnnotationsResponse }>(
+    `/compare/annotations?${params.toString()}`,
+  );
+  return data.data;
+}
+
+export function compareImageUrl(dataset: string, imagePath: string): string {
+  return `${API_BASE}/compare/image?dataset=${encodeURIComponent(
+    dataset
+  )}&imagePath=${encodeURIComponent(imagePath)}`;
+}
+

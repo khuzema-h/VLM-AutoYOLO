@@ -1,10 +1,11 @@
 import { create } from "zustand";
+import type { CompareLabelMap } from "@/lib/compareLabelMap";
 import type { FilterMode } from "@/lib/filterBoxes";
 
 interface AppState {
   // Model Config
-  appMode: "annotate" | "validate";
-  setAppMode: (mode: "annotate" | "validate") => void;
+  appMode: "annotate" | "validate" | "compare";
+  setAppMode: (mode: "annotate" | "validate" | "compare") => void;
   useSam2: boolean;
   setUseSam2: (v: boolean) => void;
   useSam3: boolean;
@@ -67,6 +68,22 @@ interface AppState {
   // Training State
   isTraining: boolean;
   setIsTraining: (v: boolean) => void;
+
+  // Compare State
+  compareDataset: string | null;
+  setCompareDataset: (dataset: string | null) => void;
+  compareImage: any | null;
+  setCompareImage: (image: any | null) => void;
+  compareVlmLabels: string[];
+  setCompareVlmLabels: (labels: string[]) => void;
+  compareGtClasses: string[];
+  setCompareGtClasses: (classes: string[]) => void;
+  compareLabelMap: CompareLabelMap;
+  setCompareLabelMap: (map: CompareLabelMap) => void;
+  compareMaxBBoxArea: number;
+  setCompareMaxBBoxArea: (ratio: number) => void;
+  compareMinConfidence: number;
+  setCompareMinConfidence: (conf: number) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -144,4 +161,40 @@ export const useAppStore = create<AppState>((set) => ({
   // Training State
   isTraining: false,
   setIsTraining: (isTraining) => set({ isTraining }),
+
+  // Compare State
+  compareDataset: null,
+  setCompareDataset: (dataset) => set({ compareDataset: dataset }),
+  compareImage: null,
+  setCompareImage: (image) => set({ compareImage: image }),
+  compareVlmLabels: [],
+  setCompareVlmLabels: (compareVlmLabels) => set({ compareVlmLabels }),
+  compareGtClasses: [],
+  setCompareGtClasses: (compareGtClasses) => set({ compareGtClasses }),
+  compareLabelMap: {},
+  setCompareLabelMap: (compareLabelMap) => set({ compareLabelMap }),
+  compareMaxBBoxArea: (() => {
+    const saved = localStorage.getItem("compare_max_bbox_area");
+    if (saved) {
+      const v = parseFloat(saved);
+      if (!Number.isNaN(v) && v >= 0.05 && v <= 1) return v;
+    }
+    return 1;
+  })(),
+  setCompareMaxBBoxArea: (compareMaxBBoxArea) => {
+    localStorage.setItem("compare_max_bbox_area", String(compareMaxBBoxArea));
+    set({ compareMaxBBoxArea });
+  },
+  compareMinConfidence: (() => {
+    const saved = localStorage.getItem("compare_min_confidence");
+    if (saved) {
+      const v = parseFloat(saved);
+      if (!Number.isNaN(v) && v >= 0 && v <= 1) return v;
+    }
+    return 0;
+  })(),
+  setCompareMinConfidence: (compareMinConfidence) => {
+    localStorage.setItem("compare_min_confidence", String(compareMinConfidence));
+    set({ compareMinConfidence });
+  },
 }));

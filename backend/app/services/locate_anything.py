@@ -344,6 +344,37 @@ def parse_boxes(raw_text: str, img_w: int, img_h: int) -> list[dict]:
     return boxes
 
 
+def filter_boxes_by_min_confidence(
+    boxes: list[dict],
+    min_confidence: float,
+) -> list[dict]:
+    """Drop boxes with confidence below threshold; keep boxes with no confidence score."""
+    if min_confidence <= 0.0:
+        return boxes
+    return [b for b in boxes if b.get("confidence") is None or b["confidence"] >= min_confidence]
+
+
+def filter_boxes_by_max_area(
+    boxes: list[dict],
+    img_w: int,
+    img_h: int,
+    max_area_ratio: float,
+) -> list[dict]:
+    """Drop boxes larger than max_area_ratio of the image area (1.0 = no limit)."""
+    if max_area_ratio >= 1.0:
+        return boxes
+    img_area = img_w * img_h
+    if img_area <= 0:
+        return boxes
+    kept: list[dict] = []
+    for box in boxes:
+        bw = box["x2"] - box["x1"]
+        bh = box["y2"] - box["y1"]
+        if bw > 0 and bh > 0 and (bw * bh) / img_area <= max_area_ratio:
+            kept.append(box)
+    return kept
+
+
 _max_long_side: int | None = None
 
 
@@ -355,7 +386,12 @@ def _get_max_long_side() -> int:
     return _max_long_side
 
 
-def detect(image_path: str | Path, categories: list[str]) -> dict:
+def detect(
+    image_path: str | Path,
+    categories: list[str],
+    max_bbox_area_ratio: float = 1.0,
+    min_confidence: float = 0.0,
+) -> dict:
     try:
         worker = _get_worker()
     except Exception as exc:
@@ -387,6 +423,24 @@ def detect(image_path: str | Path, categories: list[str]) -> dict:
             raise InferenceError() from exc
 
         boxes = parse_boxes(raw_text, w, h)
+        if min_confidence > 0.0:
+            before = len(boxes)
+            boxes = filter_boxes_by_min_confidence(boxes, min_confidence)
+            if before != len(boxes):
+                logger.info(
+                    "Min confidence %.0f%%: dropped %d low-confidence box(es)",
+                    min_confidence * 100,
+                    before - len(boxes),
+                )
+        if max_bbox_area_ratio < 1.0:
+            before = len(boxes)
+            boxes = filter_boxes_by_max_area(boxes, w, h, max_bbox_area_ratio)
+            if before != len(boxes):
+                logger.info(
+                    "Max bbox area %.0f%%: dropped %d oversized box(es)",
+                    max_bbox_area_ratio * 100,
+                    before - len(boxes),
+                )
         logger.info("Detection: %s -> %d boxes for %s", image_path, len(boxes), categories)
 
         return {

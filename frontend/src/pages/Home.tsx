@@ -3,6 +3,9 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Sidebar } from "@/components/Sidebar";
 import { VideoValidator } from "@/components/VideoValidator";
 import { DetectionResult } from "@/components/DetectionResult";
+import { CompareMain } from "@/components/Compare/CompareMain";
+import { CompareProvider } from "@/components/Compare/CompareContext";
+import { CompareImageList } from "@/components/Compare/CompareImageList";
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "@/store/useAppStore";
 import { useDetectionProcess } from "@/hooks/useDetectionProcess";
@@ -95,62 +98,73 @@ export function Home() {
 
   return (
     <>
-      <Sidebar {...sidebarProps} />
+      {appMode === "compare" ? (
+        <CompareProvider>
+          <Sidebar {...sidebarProps} />
+          <CompareImageList />
+          <main className="flex-1 flex flex-col overflow-y-auto p-6 min-w-0 min-h-0">
+            <CompareMain />
+          </main>
+        </CompareProvider>
+      ) : (
+        <>
+          <Sidebar {...sidebarProps} />
+          <main className="flex-1 flex flex-col overflow-y-auto p-6">
+            {validateVideoId && appMode === "validate" && (
+              <VideoValidator
+                key={validateRunKey}
+                videoId={validateVideoId}
+                jobId={
+                  validateModelSource === "trained" ? (selectedTrainedJobId ?? undefined) : undefined
+                }
+                modelFile={
+                  validateModelSource === "upload" ? (externalModelFile ?? undefined) : undefined
+                }
+                conf={validateConf}
+                iou={validateIou}
+              />
+            )}
 
-      <main className="flex-1 flex flex-col overflow-y-auto p-6">
-        {validateVideoId && appMode === "validate" && (
-          <VideoValidator
-            key={validateRunKey}
-            videoId={validateVideoId}
-            jobId={
-              validateModelSource === "trained" ? (selectedTrainedJobId ?? undefined) : undefined
-            }
-            modelFile={
-              validateModelSource === "upload" ? (externalModelFile ?? undefined) : undefined
-            }
-            conf={validateConf}
-            iou={validateIou}
-          />
-        )}
+            {!validateVideoId && !displayResult && !previewUrl && (
+              <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
+                {t("home.placeholderDefault")}
+              </div>
+            )}
 
-        {!validateVideoId && !displayResult && !previewUrl && (
-          <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
-            {t("home.placeholderDefault")}
-          </div>
-        )}
-        
-        {previewUrl && !validateVideoId && (
-          <ErrorBoundary>
-            <DetectionResult
-              result={displayResult}
-              previewUrl={previewUrl}
-              batchResults={batchResults}
-              batchFiles={files}
-              loading={loading}
-              elapsedMs={elapsedMs}
-              categories={categories}
-              canvasMode={canvasMode}
-              drawCategory={drawCategory}
-              recentCategories={recentCategories}
-              hiddenIndices={hiddenIndices}
-              onToggleVisibility={toggleBoxVisibility}
-              isValidation={appMode === "validate"}
-              onCanvasModeChange={setCanvasMode}
-              onDrawCategoryChange={setDrawCategory}
-              onDeleteBox={handleDeleteBox}
-              onSelectBatch={handleBatchSelect}
-              onSelectPending={(url) => {
-                setPreviewUrl(url);
-                setResult(null);
-              }}
-              onReDetect={handleReDetect}
-              onSaveBoxes={handleSaveBoxes}
-              onDrawBox={handleDrawBox}
-              isRedetecting={isRedetecting}
-            />
-          </ErrorBoundary>
-        )}
-      </main>
+            {previewUrl && !validateVideoId && (
+              <ErrorBoundary>
+                <DetectionResult
+                  result={displayResult}
+                  previewUrl={previewUrl}
+                  batchResults={batchResults}
+                  batchFiles={files}
+                  loading={loading}
+                  elapsedMs={elapsedMs}
+                  categories={categories}
+                  canvasMode={canvasMode}
+                  drawCategory={drawCategory}
+                  recentCategories={recentCategories}
+                  hiddenIndices={hiddenIndices}
+                  onToggleVisibility={toggleBoxVisibility}
+                  isValidation={appMode === "validate"}
+                  onCanvasModeChange={setCanvasMode}
+                  onDrawCategoryChange={setDrawCategory}
+                  onDeleteBox={handleDeleteBox}
+                  onSelectBatch={handleBatchSelect}
+                  onSelectPending={(url) => {
+                    setPreviewUrl(url);
+                    setResult(null);
+                  }}
+                  onReDetect={handleReDetect}
+                  onSaveBoxes={handleSaveBoxes}
+                  onDrawBox={handleDrawBox}
+                  isRedetecting={isRedetecting}
+                />
+              </ErrorBoundary>
+            )}
+          </main>
+        </>
+      )}
     </>
   );
 }

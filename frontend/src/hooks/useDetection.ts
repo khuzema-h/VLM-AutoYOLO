@@ -79,6 +79,20 @@ export function useDeleteDetectionMutation() {
   });
 }
 
+export function useDeleteAllDetectionsMutation(onCleared?: () => void) {
+  const { t } = useTranslation();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => deleteAllDetections(),
+    onSuccess: () => {
+      toast.success(t("historyList.clearAllSuccess"));
+      qc.invalidateQueries({ queryKey: ["detections"] });
+      onCleared?.();
+    },
+    onError: () => toast.error(t("historyList.clearAllFailed")),
+  });
+}
+
 export function useExportBatchMutation() {
   const { t } = useTranslation();
   return useMutation({

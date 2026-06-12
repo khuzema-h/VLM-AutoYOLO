@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from .api.routes.compare import router as compare_router
 from .api.routes.detection import router as detection_router
 from .api.routes.export import router as export_router
 from .api.routes.import_dataset import router as import_router
@@ -118,6 +119,7 @@ app.include_router(predict_router)
 app.include_router(import_router)
 app.include_router(train_router)
 app.include_router(video_router)
+app.include_router(compare_router)
 
 
 @app.get("/api/health")

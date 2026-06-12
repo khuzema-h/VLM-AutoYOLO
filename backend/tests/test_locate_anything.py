@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from app.services.locate_anything import parse_boxes
+from app.services.locate_anything import (
+    filter_boxes_by_max_area,
+    filter_boxes_by_min_confidence,
+    parse_boxes,
+)
 
 
 def test_parse_boxes_single():
@@ -55,3 +59,26 @@ def test_parse_boxes_empty_or_invalid():
     assert parse_boxes("some random text without tags", 1000, 1000) == []
     assert parse_boxes("<ref>empty box</ref>", 1000, 1000) == []
     assert parse_boxes("<box><1><2><3><4></box>", 1000, 1000) == []
+
+
+def test_filter_boxes_by_min_confidence():
+    boxes = [
+        {"class_name": "high", "confidence": 0.9, "x1": 0, "y1": 0, "x2": 10, "y2": 10},
+        {"class_name": "low", "confidence": 0.2, "x1": 0, "y1": 0, "x2": 10, "y2": 10},
+        {"class_name": "none", "confidence": None, "x1": 0, "y1": 0, "x2": 10, "y2": 10},
+    ]
+    filtered = filter_boxes_by_min_confidence(boxes, 0.5)
+    assert len(filtered) == 2
+    assert {b["class_name"] for b in filtered} == {"high", "none"}
+    assert filter_boxes_by_min_confidence(boxes, 0.0) == boxes
+
+
+def test_filter_boxes_by_max_area():
+    boxes = [
+        {"class_name": "small", "x1": 0, "y1": 0, "x2": 100, "y2": 100},
+        {"class_name": "large", "x1": 0, "y1": 0, "x2": 900, "y2": 900},
+    ]
+    filtered = filter_boxes_by_max_area(boxes, 1000, 1000, 0.5)
+    assert len(filtered) == 1
+    assert filtered[0]["class_name"] == "small"
+    assert filter_boxes_by_max_area(boxes, 1000, 1000, 1.0) == boxes

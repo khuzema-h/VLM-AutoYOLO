@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 import logging
 import shutil
@@ -131,6 +132,21 @@ def delete_detection(
     except OSError:
         logger.warning("Could not delete image file: %s", det.image_path)
     repo.delete(det, commit=True)
+
+
+@router.post("/detections/delete-bulk", status_code=204)
+def delete_detections_bulk(repo: DetectionRepository = Depends(get_repo)) -> None:
+    """Delete all detection records and their image files."""
+    while True:
+        items, _ = repo.list(page=1, page_size=100)
+        if not items:
+            break
+        for det in items:
+            with contextlib.suppress(OSError):
+                Path(det.image_path).unlink(missing_ok=True)
+            repo.delete(det, commit=False)
+        repo.db.commit()
+    return None
 
 
 @router.post("/detections/{detection_id}/boxes/{box_id}/delete", status_code=204)
