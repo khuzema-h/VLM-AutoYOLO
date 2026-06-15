@@ -30,6 +30,8 @@ export interface SidebarProps {
   result: Detection | null;
   setResult: (result: Detection | null) => void;
   handleSelectKeyframe: (files: File[]) => void;
+  filesProcessing: boolean;
+  setFilesProcessing: (processing: boolean) => void;
 }
 
 export function Sidebar({
@@ -47,6 +49,8 @@ export function Sidebar({
   result,
   setResult,
   handleSelectKeyframe,
+  filesProcessing,
+  setFilesProcessing,
 }: SidebarProps) {
   const { t } = useTranslation();
   const {
@@ -160,6 +164,7 @@ export function Sidebar({
               <ImageUploader
                 onFiles={handleFiles}
                 onClear={() => { setFiles([]); setPreviewUrl(null); setBatch([]); }}
+                onProcessingChange={setFilesProcessing}
                 disabled={loading}
               />
             ) : (
@@ -178,7 +183,7 @@ export function Sidebar({
           {!(appMode === "validate" && inputMode === "video" && validateVideoId) && (
             <DetectionControls
               recentCategories={recentCategories}
-              loading={loading}
+              loading={loading || filesProcessing}
               filesCount={files.length}
               batchProgress={batchProgress}
               onDetect={handleDetect}

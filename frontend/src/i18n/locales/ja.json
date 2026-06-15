@@ -142,8 +142,10 @@
   "imageUploader": {
     "dragToUpload": "画像/紙挟投入選択",
     "dragToUploadDisabled": "検出中…",
-    "supportInfo": "複数選択可 · 紙挟 · JPG/PNG/WebP · 1280px 自動縮小",
-    "compressing": "圧縮中…",
+    "supportInfo": "複数選択可 · ネストフォルダ · JPG/PNG/WebP · 1280px 自動縮小",
+    "selectFolder": "フォルダを選択…",
+    "compressing": "画像を準備中…",
+    "processingImages": "{{current}} / {{total}} 枚",
     "clickToChange": "選択画像変更",
     "countImages": "{{count}} 枚",
     "clearAll": "全消去"
@@ -180,7 +182,8 @@
     "exportDataset": "資料集合作成出力",
     "loadingModel": "模型読込中…",
     "detecting": "検出中…",
-    "pleaseWait": "暫待"
+    "pleaseWait": "暫待",
+    "largeBatchHint": "{{completed}} / {{total}} 枚 — サイドバーの進捗をご確認ください"
   },
   "resultTable": {
     "noTargets": "対象未検出",

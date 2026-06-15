@@ -142,8 +142,10 @@
   "imageUploader": {
     "dragToUpload": "Drag images/folders here, or click to select",
     "dragToUploadDisabled": "Detecting...",
-    "supportInfo": "Supports multi-selection · Folders · JPG/PNG/WebP · Auto-resized to 1280px",
-    "compressing": "Compressing...",
+    "supportInfo": "Supports multi-selection · Nested folders · JPG/PNG/WebP · Auto-resized to 1280px",
+    "selectFolder": "Select folder…",
+    "compressing": "Preparing images...",
+    "processingImages": "{{current}} / {{total}} images",
     "clickToChange": "Click to change image",
     "countImages": "{{count}} images",
     "clearAll": "Clear All"
@@ -180,7 +182,8 @@
     "exportDataset": "Export Dataset",
     "loadingModel": "Loading model...",
     "detecting": "Detecting...",
-    "pleaseWait": "Please wait"
+    "pleaseWait": "Please wait",
+    "largeBatchHint": "{{completed}} / {{total}} images — use sidebar progress to track the batch"
   },
   "resultTable": {
     "noTargets": "No targets detected",

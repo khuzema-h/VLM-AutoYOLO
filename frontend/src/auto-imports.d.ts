@@ -9,6 +9,7 @@ declare global {
   const API_BASE: typeof import('./lib/constants').API_BASE
   const Activity: typeof import('react').Activity
   const BOX_COLORS: typeof import('./lib/constants').BOX_COLORS
+  const BULK_IMAGE_THRESHOLD: typeof import('./lib/processImageFiles').BULK_IMAGE_THRESHOLD
   const BatchProgress: typeof import('./components/BatchProgress/index').BatchProgress
   const CANVAS_MAX_H: typeof import('./lib/constants').CANVAS_MAX_H
   const CANVAS_MAX_W: typeof import('./lib/constants').CANVAS_MAX_W
@@ -79,6 +80,7 @@ declare global {
   const autoMapByName: typeof import('./lib/compareLabelMap').autoMapByName
   const batchFileMap: typeof import('./lib/cache').batchFileMap
   const buildCompareReportHtml: typeof import('./lib/compareReportHtml').buildCompareReportHtml
+  const buildPreviewUrls: typeof import('./lib/processImageFiles').buildPreviewUrls
   const buildReportThumbnails: typeof import('./lib/compareReportThumbnails').buildReportThumbnails
   const cache: typeof import('react').cache
   const cacheSignal: typeof import('react').cacheSignal
@@ -89,6 +91,7 @@ declare global {
   const chartUrl: typeof import('./services/api').chartUrl
   const checkSam3Health: typeof import('./services/api').checkSam3Health
   const clearCompareVlmCache: typeof import('./services/api').clearCompareVlmCache
+  const collectDroppedFiles: typeof import('./lib/droppedFiles').collectDroppedFiles
   const compareImageUrl: typeof import('./services/api').compareImageUrl
   const createContext: typeof import('react').createContext
   const createRef: typeof import('react').createRef
@@ -117,6 +120,7 @@ declare global {
   const fetchTrainingJobs: typeof import('./services/api').fetchTrainingJobs
   const fetchYoloSeries: typeof import('./services/api').fetchYoloSeries
   const fileUrlCache: typeof import('./lib/cache').fileUrlCache
+  const filterImageFiles: typeof import('./lib/droppedFiles').filterImageFiles
   const filterReportCases: typeof import('./lib/compareReportCases').filterReportCases
   const formatTime: typeof import('./lib/formatTime').formatTime
   const forwardRef: typeof import('react').forwardRef
@@ -130,6 +134,7 @@ declare global {
   const importChunkComplete: typeof import('./services/api').importChunkComplete
   const importChunkInit: typeof import('./services/api').importChunkInit
   const importDataset: typeof import('./services/api').importDataset
+  const isImageFile: typeof import('./lib/droppedFiles').isImageFile
   const keyframeImageUrl: typeof import('./services/api').keyframeImageUrl
   const lazy: typeof import('react').lazy
   const listDetections: typeof import('./services/api').listDetections
@@ -141,6 +146,7 @@ declare global {
   const optimisticModelLoading: typeof import('./hooks/useModelEvents').optimisticModelLoading
   const optimisticModelUnloaded: typeof import('./hooks/useModelEvents').optimisticModelUnloaded
   const parseCategories: typeof import('./lib/parsers').parseCategories
+  const processImageFiles: typeof import('./lib/processImageFiles').processImageFiles
   const renameTrainingJob: typeof import('./services/api').renameTrainingJob
   const request: typeof import('./services/request').request
   const saveFilterSettings: typeof import('./services/api').saveFilterSettings

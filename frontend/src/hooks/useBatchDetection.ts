@@ -1,3 +1,7 @@
+import toast from "react-hot-toast";
+
+const PROGRESS_UPDATE_EVERY = 10;
+
 export function useBatchDetection() {
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
   const batchRef = useRef(false);
@@ -22,9 +26,20 @@ export function useBatchDetection() {
       const t0 = performance.now();
       let elapsed = 0;
 
-      try {
-        for (let i = 0; i < files.length; i++) {
-          if (!batchRef.current || signal?.aborted) break;
+      const updateProgress = (index: number) => {
+        if (index >= files.length - 1) {
+          setBatchProgress({ current: 0, total: 0 });
+          return;
+        }
+        const next = index + 1;
+        if (files.length <= PROGRESS_UPDATE_EVERY || next % PROGRESS_UPDATE_EVERY === 0) {
+          setBatchProgress({ current: next, total: files.length });
+        }
+      };
+
+      for (let i = 0; i < files.length; i++) {
+        if (!batchRef.current || signal?.aborted) break;
+        try {
           const data = await detectImage(
             files[i],
             categories,
@@ -38,20 +53,17 @@ export function useBatchDetection() {
             signal,
           );
           results.push(data);
-          if (i === files.length - 1) {
-            setBatchProgress({ current: 0, total: 0 });
-          } else {
-            setBatchProgress({ current: i + 1, total: files.length });
-          }
+          updateProgress(i);
           elapsed = Math.round(performance.now() - t0);
           onEach(data, files[i], i, elapsed);
+        } catch (e) {
+          if (e instanceof DOMException && e.name === "AbortError") break;
+          console.error(`Batch detection failed on ${files[i]?.name}:`, e);
+          toast.error(`Detection failed: ${files[i]?.name ?? `image ${i + 1}`}`);
+          updateProgress(i);
         }
-      } catch (e) {
-        if (e instanceof DOMException && e.name === "AbortError") {
-          // silently handle abort
-        }
-        setBatchProgress({ current: 0, total: 0 });
       }
+      setBatchProgress({ current: 0, total: 0 });
       return { results, elapsed };
     },
     [],

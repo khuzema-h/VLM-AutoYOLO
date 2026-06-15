@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -40,6 +40,7 @@ export function useDetectionProcess() {
   const queryClient = useQueryClient();
   const detectMut = useDetectMutation();
   const abortRef = useRef<AbortController | null>(null);
+  const [filesProcessing, setFilesProcessing] = useState(false);
 
   const { batchProgress, runBatch, cancelBatch, setBatchProgress } =
     useBatchDetection();
@@ -188,8 +189,9 @@ export function useDetectionProcess() {
         (data, file, i) => {
           batchFileMap.set(data.id, file);
           setBatchResults((prev) => {
-            const exists = prev.some((p) => p.id === data.id);
-            return exists ? prev : [...prev, data];
+            const next = [...prev];
+            next[i] = data;
+            return next;
           });
           if (i === 0) {
             setResult(data);
@@ -293,6 +295,8 @@ export function useDetectionProcess() {
     handleReDetect,
     cancel,
     loading,
+    filesProcessing,
+    setFilesProcessing,
     isRedetecting: detectMut.isPending,
   };
 }

@@ -47,6 +47,8 @@ export function Home() {
     handleReDetect,
     cancel,
     loading,
+    filesProcessing,
+    setFilesProcessing,
     isRedetecting,
   } = useDetectionProcess();
 
@@ -94,6 +96,8 @@ export function Home() {
     result,
     setResult,
     handleSelectKeyframe,
+    filesProcessing,
+    setFilesProcessing,
   };
 
   return (

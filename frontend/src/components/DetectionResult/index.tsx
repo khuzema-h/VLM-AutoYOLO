@@ -27,6 +27,7 @@ interface Props {
 }
 
 const EMPTY_BOXES: never[] = [];
+const THUMBNAIL_STRIP_LIMIT = 64;
 
 export function DetectionResult({
   result,
@@ -54,7 +55,26 @@ export function DetectionResult({
 }: Props) {
   const { t } = useTranslation();
 
-  const blobUrls = batchFiles.map((f) => getFileUrl(f));
+  const showThumbStrip =
+    batchFiles.length > 1 && batchFiles.length <= THUMBNAIL_STRIP_LIMIT;
+  const thumbIndices = useMemo(
+    () => (showThumbStrip ? batchFiles.map((_, i) => i) : []),
+    [batchFiles, showThumbStrip],
+  );
+  const blobUrls = useMemo(
+    () => (showThumbStrip ? batchFiles.map((f) => getFileUrl(f)) : []),
+    [batchFiles, showThumbStrip],
+  );
+  const anyPendingSelected = useMemo(
+    () =>
+      showThumbStrip &&
+      blobUrls.some((url, idx) => !batchResults[idx] && previewUrl === url),
+    [showThumbStrip, blobUrls, batchResults, previewUrl],
+  );
+  const completedCount = useMemo(
+    () => batchResults.filter(Boolean).length,
+    [batchResults],
+  );
 
   return (
     <div className="space-y-4">
@@ -112,9 +132,9 @@ export function DetectionResult({
                 : `${result.elapsedMs}ms`}
             </span>
           )}
-          {result && batchResults.length > 1 && (
+          {result && batchFiles.length > 1 && (
             <span className="ml-2 text-gray-400 font-normal">
-              — {result.imageName} ({batchResults.indexOf(result) + 1}/{batchResults.length})
+              — {result.imageName} ({batchResults.indexOf(result) + 1}/{batchFiles.length})
             </span>
           )}
         </h2>
@@ -195,7 +215,8 @@ export function DetectionResult({
                 ],
                 onClick: async ({ key }) => {
                   if (!result) return;
-                  const ids = batchResults.length > 1 ? batchResults.map((r) => r.id) : [result.id];
+                  const completed = batchResults.filter(Boolean);
+                  const ids = completed.length > 1 ? completed.map((r) => r.id) : [result.id];
                   const labels: Record<string, string> = {
                     yolo: "YOLO",
                     "yolo-seg": "YOLO_Seg",
@@ -214,8 +235,8 @@ export function DetectionResult({
                 disabled={!result || loading}
                 className="rounded bg-primary-600 px-3 py-1 text-xs font-medium text-white hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {batchResults.length > 1
-                  ? t("detectionResult.exportAllDataset", { count: batchResults.length })
+                {batchFiles.length > 1
+                  ? t("detectionResult.exportAllDataset", { count: completedCount || batchFiles.length })
                   : t("detectionResult.exportDataset")}
               </button>
             </Dropdown>
@@ -223,15 +244,22 @@ export function DetectionResult({
         </div>
       </div>
 
-      {batchFiles.length > 1 && (
+      {batchFiles.length > 1 && !showThumbStrip && (
+        <p className="text-xs text-gray-500">
+          {t("detectionResult.largeBatchHint", {
+            completed: completedCount,
+            total: batchFiles.length,
+          })}
+        </p>
+      )}
+
+      {showThumbStrip && (
         <div className="flex gap-2 overflow-x-auto pb-2">
-          {batchFiles.map((file, i) => {
+          {thumbIndices.map((i) => {
+            const file = batchFiles[i];
             const res = batchResults[i];
             const done = !!res;
             const pending = !done && loading;
-            const anyPendingSelected = blobUrls.some(
-              (url, idx) => !batchResults[idx] && previewUrl === url,
-            );
             const isActive = anyPendingSelected
               ? previewUrl === blobUrls[i]
               : done && result?.id === res.id;
