@@ -1,6 +1,7 @@
 {
   "common": {
     "annotate": "VLM 标注",
+    "review": "BBox 审核",
     "validate": "YOLO 検証",
     "compare": "データセット比較",
     "image": "画像",
@@ -184,6 +185,29 @@
     "detecting": "検出中…",
     "pleaseWait": "暫待",
     "largeBatchHint": "{{completed}} / {{total}} 枚 — サイドバーの進捗をご確認ください"
+  },
+  "bboxEditor": {
+    "select": "選択/編集",
+    "selectHint": "ボックスをクリックで選択、ドラッグで移動、角でリサイズ",
+    "imageListTitle": "画像 ({{count}})",
+    "searchPlaceholder": "画像を絞り込み...",
+    "noImages": "履歴に标注画像がありません — 先に标注タブで検出を実行してください",
+    "noMatches": "一致する画像がありません",
+    "emptyState": "标注画像が見つかりません。标注タブで検出を実行するか、履歴に保存されているか確認してください。",
+    "selectImage": "リストから画像を選択",
+    "prev": "前へ",
+    "next": "次へ",
+    "keyboardHint": "← → で画像切替 · Delete で選択ボックス削除",
+    "reviewSummary": "レビュー概要",
+    "imageCount": "画像数",
+    "boxCount": "ボックス数",
+    "exportDataset": "データセットをエクスポート ({{count}} 枚)",
+    "exportHint": "編集は自動保存されます。すべて確認後にエクスポートしてください。",
+    "loadedOfTotal": "{{loaded}} / {{total}} 件読み込み済み",
+    "loadAll": "すべて読み込む (残り {{remaining}} 件)",
+    "exportSuccess": "{{count}} 枚をエクスポートしました",
+    "updateFailed": "ボックスの保存に失敗しました",
+    "sidebarHint": "エクスポート前に履歴のバウンディングボックスを確認・修正します。リストから画像を選択して編集してください。"
   },
   "resultTable": {
     "noTargets": "対象未検出",

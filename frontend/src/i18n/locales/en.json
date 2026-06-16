@@ -1,6 +1,7 @@
 {
   "common": {
     "annotate": "VLM Annotate",
+    "review": "BBox Review",
     "validate": "YOLO Validate",
     "compare": "Dataset Compare",
     "image": "Image",
@@ -184,6 +185,29 @@
     "detecting": "Detecting...",
     "pleaseWait": "Please wait",
     "largeBatchHint": "{{completed}} / {{total}} images — use sidebar progress to track the batch"
+  },
+  "bboxEditor": {
+    "select": "Select / Edit",
+    "selectHint": "Click a box to select; drag to move; drag corners to resize",
+    "imageListTitle": "Images ({{count}})",
+    "searchPlaceholder": "Filter images...",
+    "noImages": "No annotated images in history yet — run detection in the Annotate tab first",
+    "noMatches": "No matching images",
+    "emptyState": "No annotated images found. Run detection in the Annotate tab, or check that history has saved results.",
+    "selectImage": "Select an image from the list",
+    "prev": "Prev",
+    "next": "Next",
+    "keyboardHint": "← → navigate images · Delete removes selected box",
+    "reviewSummary": "Review summary",
+    "imageCount": "Images",
+    "boxCount": "Boxes",
+    "exportDataset": "Export Dataset ({{count}} images)",
+    "exportHint": "Edits are saved automatically. Export when you are satisfied with all annotations.",
+    "loadedOfTotal": "{{loaded}} loaded of {{total}}",
+    "loadAll": "Load all ({{remaining}} more)",
+    "exportSuccess": "Exported {{count}} images",
+    "updateFailed": "Failed to save box changes",
+    "sidebarHint": "Review and correct bounding boxes from your detection history before exporting. Select an image from the list to edit its boxes."
   },
   "resultTable": {
     "noTargets": "No targets detected",

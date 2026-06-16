@@ -170,10 +170,11 @@ class AddBoxBody(BaseSchema):
 
 
 class UpdateBoxBody(BaseSchema):
-    x1: int
-    y1: int
-    x2: int
-    y2: int
+    x1: int | None = None
+    y1: int | None = None
+    x2: int | None = None
+    y2: int | None = None
+    class_name: str | None = None
 
 
 @router.post("/detections/{detection_id}/boxes", status_code=201)
@@ -256,7 +257,16 @@ def update_box(
     box = repo.get_box(detection_id, box_id)
     if not box:
         raise NotFoundError("DetectionBox", box_id)
-    box.x1, box.y1, box.x2, box.y2 = body.x1, body.y1, body.x2, body.y2
+    if body.x1 is not None:
+        box.x1 = body.x1
+    if body.y1 is not None:
+        box.y1 = body.y1
+    if body.x2 is not None:
+        box.x2 = body.x2
+    if body.y2 is not None:
+        box.y2 = body.y2
+    if body.class_name is not None:
+        box.class_name = body.class_name
     repo.update_box(box, commit=True)
     return APIResponse(data={"ok": True})
 

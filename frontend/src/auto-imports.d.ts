@@ -8,6 +8,8 @@ export {}
 declare global {
   const API_BASE: typeof import('./lib/constants').API_BASE
   const Activity: typeof import('react').Activity
+  const BBoxEditorCanvas: typeof import('./components/BBoxEditor/BBoxEditorCanvas').BBoxEditorCanvas
+  const BBoxEditorMain: typeof import('./components/BBoxEditor/BBoxEditorMain').BBoxEditorMain
   const BOX_COLORS: typeof import('./lib/constants').BOX_COLORS
   const BULK_IMAGE_THRESHOLD: typeof import('./lib/processImageFiles').BULK_IMAGE_THRESHOLD
   const BatchProgress: typeof import('./components/BatchProgress/index').BatchProgress
@@ -58,6 +60,8 @@ declare global {
   const QueryClientProvider: typeof import('@tanstack/react-query').QueryClientProvider
   const REPORT_TIMEOUT: typeof import('./services/request').REPORT_TIMEOUT
   const ResultTable: typeof import('./components/ResultTable/index').ResultTable
+  const ReviewExportPanel: typeof import('./components/BBoxEditor/ReviewExportPanel').ReviewExportPanel
+  const ReviewImageList: typeof import('./components/BBoxEditor/ReviewImageList').ReviewImageList
   const Sam3Status: typeof import('./components/Sam3Status/index').Sam3Status
   const Sidebar: typeof import('./components/Sidebar/index').Sidebar
   const SidebarHeader: typeof import('./components/Sidebar/Header').SidebarHeader
@@ -82,6 +86,7 @@ declare global {
   const buildCompareReportHtml: typeof import('./lib/compareReportHtml').buildCompareReportHtml
   const buildPreviewUrls: typeof import('./lib/processImageFiles').buildPreviewUrls
   const buildReportThumbnails: typeof import('./lib/compareReportThumbnails').buildReportThumbnails
+  const buildReviewItems: typeof import('./lib/reviewItems').buildReviewItems
   const cache: typeof import('react').cache
   const cacheSignal: typeof import('react').cacheSignal
   const cancelComparePrecompute: typeof import('./services/api').cancelComparePrecompute
@@ -90,6 +95,7 @@ declare global {
   const caseFilterLabel: typeof import('./lib/compareReportCases').caseFilterLabel
   const chartUrl: typeof import('./services/api').chartUrl
   const checkSam3Health: typeof import('./services/api').checkSam3Health
+  const clampBox: typeof import('./lib/bboxHitTest').clampBox
   const clearCompareVlmCache: typeof import('./services/api').clearCompareVlmCache
   const collectDroppedFiles: typeof import('./lib/droppedFiles').collectDroppedFiles
   const compareImageUrl: typeof import('./services/api').compareImageUrl
@@ -130,6 +136,8 @@ declare global {
   const getModelStatus: typeof import('./services/api').getModelStatus
   const getSam2Status: typeof import('./services/api').getSam2Status
   const getVideo: typeof import('./services/api').getVideo
+  const hitTestBox: typeof import('./lib/bboxHitTest').hitTestBox
+  const hitTestHandle: typeof import('./lib/bboxHitTest').hitTestHandle
   const importChunkCancel: typeof import('./services/api').importChunkCancel
   const importChunkComplete: typeof import('./services/api').importChunkComplete
   const importChunkInit: typeof import('./services/api').importChunkInit
@@ -149,6 +157,7 @@ declare global {
   const processImageFiles: typeof import('./lib/processImageFiles').processImageFiles
   const renameTrainingJob: typeof import('./services/api').renameTrainingJob
   const request: typeof import('./services/request').request
+  const resizeBox: typeof import('./lib/bboxHitTest').resizeBox
   const saveFilterSettings: typeof import('./services/api').saveFilterSettings
   const startComparePrecompute: typeof import('./services/api').startComparePrecompute
   const startTraining: typeof import('./services/api').startTraining
@@ -158,12 +167,14 @@ declare global {
   const unloadModel: typeof import('./services/api').unloadModel
   const unloadSam2: typeof import('./services/api').unloadSam2
   const unloadSam3: typeof import('./services/api').unloadSam3
+  const updateBox: typeof import('./services/api').updateBox
   const uploadCache: typeof import('./lib/constants').uploadCache
   const uploadVideo: typeof import('./services/api').uploadVideo
   const use: typeof import('react').use
   const useActionState: typeof import('react').useActionState
   const useAntdTable: typeof import('ahooks').useAntdTable
   const useAsyncEffect: typeof import('ahooks').useAsyncEffect
+  const useBBoxEditor: typeof import('./hooks/useBBoxEditor').useBBoxEditor
   const useBatchDetection: typeof import('./hooks/useBatchDetection').useBatchDetection
   const useBoolean: typeof import('ahooks').useBoolean
   const useCallback: typeof import('react').useCallback
@@ -248,6 +259,7 @@ declare global {
   const useRequest: typeof import('ahooks').useRequest
   const useResetState: typeof import('ahooks').useResetState
   const useResponsive: typeof import('ahooks').useResponsive
+  const useReviewSelection: typeof import('./hooks/useReviewSelection').useReviewSelection
   const useSafeState: typeof import('ahooks').useSafeState
   const useScroll: typeof import('ahooks').useScroll
   const useScrollLoad: typeof import('./hooks/useScrollLoad').useScrollLoad
@@ -295,6 +307,9 @@ declare global {
   // @ts-ignore
   export type { SidebarProps } from './components/Sidebar/index'
   import('./components/Sidebar/index')
+  // @ts-ignore
+  export type { ResizeHandle } from './lib/bboxHitTest'
+  import('./lib/bboxHitTest')
   // @ts-ignore
   export type { CompareLabelMap } from './lib/compareLabelMap'
   import('./lib/compareLabelMap')

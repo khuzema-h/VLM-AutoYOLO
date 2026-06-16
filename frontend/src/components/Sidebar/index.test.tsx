@@ -43,6 +43,7 @@ describe("Sidebar", () => {
       setResult: vi.fn(),
       filesProcessing: false,
       setFilesProcessing: vi.fn(),
+      reviewItems: [],
     };
     const { container } = render(<Sidebar {...mockProps} />);
     expect(container).toBeTruthy();

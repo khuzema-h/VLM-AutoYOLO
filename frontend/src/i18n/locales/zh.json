@@ -1,6 +1,7 @@
 {
   "common": {
     "annotate": "标注预训练",
+    "review": "框体审核",
     "validate": "YOLO 验证",
     "compare": "数据集对比",
     "image": "图片",
@@ -184,6 +185,29 @@
     "detecting": "检测进行中...",
     "pleaseWait": "请稍候",
     "largeBatchHint": "{{completed}} / {{total}} 张图片 — 请在侧边栏查看批量进度"
+  },
+  "bboxEditor": {
+    "select": "选择/编辑",
+    "selectHint": "点击框体选中；拖动移动；拖角点调整大小",
+    "imageListTitle": "图片 ({{count}})",
+    "searchPlaceholder": "筛选图片...",
+    "noImages": "历史记录中尚无标注图片 — 请先在标注页运行检测",
+    "noMatches": "无匹配图片",
+    "emptyState": "未找到已标注图片。请在标注页运行检测，或确认历史记录中有保存结果。",
+    "selectImage": "请从列表选择图片",
+    "prev": "上一张",
+    "next": "下一张",
+    "keyboardHint": "← → 切换图片 · Delete 删除选中框",
+    "reviewSummary": "审核概览",
+    "imageCount": "图片数",
+    "boxCount": "框体数",
+    "exportDataset": "导出数据集 ({{count}} 张)",
+    "exportHint": "编辑会自动保存。确认所有标注无误后再导出。",
+    "loadedOfTotal": "已加载 {{loaded}} / {{total}}",
+    "loadAll": "加载全部 (还有 {{remaining}} 张)",
+    "exportSuccess": "已导出 {{count}} 张图片",
+    "updateFailed": "保存框体修改失败",
+    "sidebarHint": "导出前请在此审核并修正历史记录中的边界框。从列表选择图片进行编辑。"
   },
   "resultTable": {
     "noTargets": "未检测到目标",

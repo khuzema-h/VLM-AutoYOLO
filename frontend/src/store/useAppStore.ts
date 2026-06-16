@@ -4,8 +4,8 @@ import type { FilterMode } from "@/lib/filterBoxes";
 
 interface AppState {
   // Model Config
-  appMode: "annotate" | "validate" | "compare";
-  setAppMode: (mode: "annotate" | "validate" | "compare") => void;
+  appMode: "annotate" | "validate" | "compare" | "review";
+  setAppMode: (mode: "annotate" | "validate" | "compare" | "review") => void;
   useSam2: boolean;
   setUseSam2: (v: boolean) => void;
   useSam3: boolean;

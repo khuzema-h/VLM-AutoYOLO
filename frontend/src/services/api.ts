@@ -55,6 +55,20 @@ export async function deleteAllDetections(): Promise<void> {
   await request.post("/detections/delete-bulk");
 }
 
+export async function updateBox(
+  detectionId: string,
+  boxId: string,
+  patch: { x1?: number; y1?: number; x2?: number; y2?: number; className?: string },
+): Promise<void> {
+  await request.put(`/detections/${detectionId}/boxes/${boxId}`, {
+    x1: patch.x1,
+    y1: patch.y1,
+    x2: patch.x2,
+    y2: patch.y2,
+    className: patch.className,
+  });
+}
+
 export async function deleteBox(detectionId: string, boxId: string): Promise<void> {
   await request.post(`/detections/${detectionId}/boxes/${boxId}/delete`);
 }

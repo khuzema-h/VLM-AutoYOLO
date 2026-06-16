@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Sidebar } from "@/components/Sidebar";
 import { VideoValidator } from "@/components/VideoValidator";
@@ -6,6 +6,11 @@ import { DetectionResult } from "@/components/DetectionResult";
 import { CompareMain } from "@/components/Compare/CompareMain";
 import { CompareProvider } from "@/components/Compare/CompareContext";
 import { CompareImageList } from "@/components/Compare/CompareImageList";
+import { ReviewImageList } from "@/components/BBoxEditor/ReviewImageList";
+import { BBoxEditorMain } from "@/components/BBoxEditor/BBoxEditorMain";
+import { buildReviewItems } from "@/lib/reviewItems";
+import { useReviewSelection } from "@/hooks/useReviewSelection";
+import { batchFileMap } from "@/lib/cache";
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "@/store/useAppStore";
 import { useDetectionProcess } from "@/hooks/useDetectionProcess";
@@ -53,6 +58,12 @@ export function Home() {
   } = useDetectionProcess();
 
   const { historyQuery, allItems, total, recentCategories, handleSelectHistory } = useDetectionHistory();
+  const { selectForReview } = useReviewSelection();
+
+  const reviewItems = useMemo(
+    () => buildReviewItems(allItems, batchResults, result),
+    [allItems, batchResults, result],
+  );
 
   const {
     handleDrawBox,
@@ -98,6 +109,7 @@ export function Home() {
     handleSelectKeyframe,
     filesProcessing,
     setFilesProcessing,
+    reviewItems,
   };
 
   return (
@@ -110,6 +122,35 @@ export function Home() {
             <CompareMain />
           </main>
         </CompareProvider>
+      ) : appMode === "review" ? (
+        <>
+          <Sidebar {...sidebarProps} />
+          <ReviewImageList
+            items={reviewItems}
+            activeId={result?.id ?? null}
+            total={total}
+            loadedCount={allItems.length}
+            hasNextPage={historyQuery.hasNextPage ?? false}
+            isFetchingNextPage={historyQuery.isFetchingNextPage}
+            fetchNextPage={() => historyQuery.fetchNextPage()}
+            onSelect={(det) => {
+              const idx = reviewItems.findIndex((d) => d.id === det.id);
+              const file = batchFileMap.get(det.id) ?? files[idx];
+              void selectForReview(det, file);
+            }}
+          />
+          <main className="flex-1 flex flex-col overflow-y-auto p-6 min-w-0 min-h-0">
+            <BBoxEditorMain
+              items={reviewItems}
+              files={files}
+              categories={categories}
+              recentCategories={recentCategories}
+              hiddenIndices={hiddenIndices}
+              onToggleVisibility={toggleBoxVisibility}
+              onSelectImage={selectForReview}
+            />
+          </main>
+        </>
       ) : (
         <>
           <Sidebar {...sidebarProps} />

@@ -14,6 +14,10 @@ import { DetectionControls } from "./DetectionControls";
 import type { Detection } from "@/types";
 import { useAppStore } from "@/store/useAppStore";
 import { CompareSidebar } from "@/components/Compare/CompareSidebar";
+import { ReviewExportPanel } from "@/components/BBoxEditor/ReviewExportPanel";
+import { batchFileMap, getFileUrl } from "@/lib/cache";
+import { API_BASE } from "@/lib/constants";
+import { getDetection } from "@/services/api";
 
 export interface SidebarProps {
   recentCategories: string[];
@@ -32,6 +36,7 @@ export interface SidebarProps {
   handleSelectKeyframe: (files: File[]) => void;
   filesProcessing: boolean;
   setFilesProcessing: (processing: boolean) => void;
+  reviewItems: Detection[];
 }
 
 export function Sidebar({
@@ -51,6 +56,7 @@ export function Sidebar({
   handleSelectKeyframe,
   filesProcessing,
   setFilesProcessing,
+  reviewItems,
 }: SidebarProps) {
   const { t } = useTranslation();
   const {
@@ -71,30 +77,58 @@ export function Sidebar({
     filterMode, setFilterMode,
     nmsIou, setNmsIou,
     setHiddenIndices,
+    categories,
   } = useAppStore();
 
   return (
     <aside
       className={`flex-shrink-0 border-r border-gray-200 bg-white flex flex-col gap-4 relative ${
-        appMode === "compare" ? "overflow-hidden min-h-0 h-full" : "overflow-y-auto"
+        appMode === "compare" || appMode === "review"
+          ? "overflow-hidden min-h-0 h-full"
+          : "overflow-y-auto"
       }`}
-      style={{ width: appMode === "compare" ? 360 : 440, padding: "1.25rem" }}
+      style={{
+        width: appMode === "compare" ? 360 : appMode === "review" ? 320 : 440,
+        padding: "1.25rem",
+      }}
     >
       <SidebarHeader />
 
       {/* Mode tabs */}
       <div className="flex border-b border-gray-200 mb-2">
-        {(["annotate", "validate", "compare"] as const).map((m) => (
+        {(["annotate", "review", "validate", "compare"] as const).map((m) => (
           <button
             key={m}
-            onClick={() => { setAppMode(m); setResult(null); setValidateVideoId(null); }}
+            onClick={() => {
+              setAppMode(m);
+              if (m === "validate" || m === "compare") setResult(null);
+              setValidateVideoId(null);
+              if (m === "review" && reviewItems.length > 0) {
+                const current =
+                  result && reviewItems.some((d) => d.id === result.id)
+                    ? result
+                    : reviewItems[0];
+                void (async () => {
+                  try {
+                    const full = await getDetection(current.id);
+                    setResult(full);
+                    const file = batchFileMap.get(full.id);
+                    setPreviewUrl(
+                      file ? getFileUrl(file) : `${API_BASE}/detections/${full.id}/image`,
+                    );
+                  } catch (e) {
+                    console.error("Failed to open review tab:", e);
+                  }
+                })();
+              }
+            }}
             className={`flex-1 pb-3 pt-1 text-xs font-bold transition-all duration-200 relative text-center cursor-pointer ${
               appMode === m
                 ? "text-primary-600 border-b-2 border-primary-600 scale-[1.02]"
                 : "text-gray-400 hover:text-gray-600 border-b-2 border-transparent"
             }`}
           >
-            {{ annotate: t("common.annotate"), validate: t("common.validate"), compare: t("common.compare") }[m]}
+            {{ annotate: t("common.annotate"), review: t("common.review"), validate: t("common.validate"), compare: t("common.compare") }[m]}
           </button>
         ))}
       </div>
@@ -102,6 +136,11 @@ export function Sidebar({
       {appMode === "compare" ? (
         <div className="flex-1 min-h-0 overflow-y-auto">
           <CompareSidebar />
+        </div>
+      ) : appMode === "review" ? (
+        <div className="flex-1 min-h-0 overflow-y-auto space-y-3">
+          <p className="text-xs text-gray-500 leading-relaxed">{t("bboxEditor.sidebarHint")}</p>
+          <ReviewExportPanel items={reviewItems} categories={categories} />
         </div>
       ) : (
         <>
