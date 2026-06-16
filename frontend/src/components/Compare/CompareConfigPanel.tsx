@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Select, Progress, Button, Popconfirm, Slider, Input, Alert } from "antd";
+import { Select, Progress, Button, Popconfirm, Input, Alert } from "antd";
 import {
   DatabaseOutlined,
   PlayCircleOutlined,
@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import { CategoryInput } from "@/components/CategoryInput";
 import { CompareLabelMapping } from "@/components/Compare/CompareLabelMapping";
+import { VlmDetectionParams } from "@/components/VlmDetectionParams";
 import { useCompareContext } from "@/components/Compare/CompareContext";
 import { useAppStore } from "@/store/useAppStore";
 
@@ -126,47 +127,12 @@ export function CompareConfigPanel() {
           />
 
           <div className="flex flex-col gap-1.5 mt-2 pt-2 border-t border-gray-100">
-            <div className="flex items-center justify-between gap-2">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                {t("compare.maxBBoxArea")}
-              </label>
-              <span className="text-xs font-mono font-bold text-primary-600">
-                {Math.round(compareMaxBBoxArea * 100)}%
-              </span>
-            </div>
-            <Slider
-              min={0.05}
-              max={1}
-              step={0.05}
-              value={compareMaxBBoxArea}
-              onChange={handleMaxBBoxAreaChange}
-              tooltip={{ formatter: (v) => `${Math.round((v ?? 1) * 100)}%` }}
+            <VlmDetectionParams
+              maxBBoxArea={compareMaxBBoxArea}
+              minConfidence={compareMinConfidence}
+              onMaxBBoxAreaChange={handleMaxBBoxAreaChange}
+              onMinConfidenceChange={handleMinConfidenceChange}
             />
-            <p className="text-[10px] text-gray-400 leading-snug">
-              {t("compare.maxBBoxAreaHint")}
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-1.5 pt-2 border-t border-gray-100">
-            <div className="flex items-center justify-between gap-2">
-              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                {t("compare.minConfidence")}
-              </label>
-              <span className="text-xs font-mono font-bold text-primary-600">
-                {Math.round(compareMinConfidence * 100)}%
-              </span>
-            </div>
-            <Slider
-              min={0}
-              max={0.95}
-              step={0.05}
-              value={compareMinConfidence}
-              onChange={handleMinConfidenceChange}
-              tooltip={{ formatter: (v) => `${Math.round((v ?? 0) * 100)}%` }}
-            />
-            <p className="text-[10px] text-gray-400 leading-snug">
-              {t("compare.minConfidenceHint")}
-            </p>
           </div>
         </div>
       )}

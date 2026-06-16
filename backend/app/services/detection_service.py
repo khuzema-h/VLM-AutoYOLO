@@ -40,6 +40,8 @@ async def process_detection(
         "use_sam3_seg": params.use_sam3_seg,
         "sam3_threshold": params.sam3_threshold,
         "sam3_mask_threshold": params.sam3_mask_threshold,
+        "max_bbox_area_ratio": params.max_bbox_area_ratio,
+        "min_confidence": params.min_confidence,
     }
 
     t0 = time.perf_counter()

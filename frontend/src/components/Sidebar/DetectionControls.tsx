@@ -1,4 +1,5 @@
 import { useAppStore } from "@/store/useAppStore";
+import { VlmDetectionParams } from "@/components/VlmDetectionParams";
 
 interface Props {
   recentCategories: string[];
@@ -32,6 +33,10 @@ export function DetectionControls({
     setSam3MaskThreshold,
     sam2ScoreThreshold,
     setSam2ScoreThreshold,
+    compareMaxBBoxArea,
+    setCompareMaxBBoxArea,
+    compareMinConfidence,
+    setCompareMinConfidence,
   } = useAppStore();
 
   return (
@@ -45,6 +50,16 @@ export function DetectionControls({
           recentCategories={recentCategories}
         />
       </div>
+
+      {appMode === "annotate" && !useSam3 && (
+        <VlmDetectionParams
+          maxBBoxArea={compareMaxBBoxArea}
+          minConfidence={compareMinConfidence}
+          onMaxBBoxAreaChange={setCompareMaxBBoxArea}
+          onMinConfidenceChange={setCompareMinConfidence}
+          disabled={loading}
+        />
+      )}
 
       {appMode === "annotate" && !useSam3 && (
         <>

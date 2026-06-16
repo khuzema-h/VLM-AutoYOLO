@@ -5,13 +5,17 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from .yolo_format import _get_filtered_boxes
+from .yolo_format import _export_class_name, _get_filtered_boxes
 
 if TYPE_CHECKING:
     from ..models.detection import Detection
 
 
-def _build_coco(detections: list[Detection], class_map: dict[str, int]) -> dict:
+def _build_coco(
+    detections: list[Detection],
+    class_map: dict[str, int],
+    label_map: dict[str, str] | None = None,
+) -> dict:
     images = []
     annotations = []
     ann_id = 1
@@ -35,7 +39,7 @@ def _build_coco(detections: list[Detection], class_map: dict[str, int]) -> dict:
             ann = {
                 "id": ann_id,
                 "image_id": img_id,
-                "category_id": class_map[box["class_name"]],
+                "category_id": class_map[_export_class_name(box["class_name"], label_map)],
                 "bbox": [x1, y1, w, h],
                 "area": w * h,
                 "iscrowd": 0,
@@ -56,5 +60,9 @@ def _build_coco(detections: list[Detection], class_map: dict[str, int]) -> dict:
     return {"images": images, "annotations": annotations, "categories": categories}
 
 
-def export_coco_json(detections: list[Detection], class_map: dict[str, int]) -> str:
-    return json.dumps(_build_coco(detections, class_map), ensure_ascii=False, indent=2)
+def export_coco_json(
+    detections: list[Detection],
+    class_map: dict[str, int],
+    label_map: dict[str, str] | None = None,
+) -> str:
+    return json.dumps(_build_coco(detections, class_map, label_map), ensure_ascii=False, indent=2)

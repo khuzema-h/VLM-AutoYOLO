@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { CompareLabelMap } from "@/lib/compareLabelMap";
+import type { ReviewLabelMap } from "@/lib/reviewLabelMap";
 import type { FilterMode } from "@/lib/filterBoxes";
 
 interface AppState {
@@ -84,6 +85,10 @@ interface AppState {
   setCompareMaxBBoxArea: (ratio: number) => void;
   compareMinConfidence: number;
   setCompareMinConfidence: (conf: number) => void;
+
+  // Review export label renaming
+  reviewLabelMap: ReviewLabelMap;
+  setReviewLabelMap: (map: ReviewLabelMap) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -197,4 +202,7 @@ export const useAppStore = create<AppState>((set) => ({
     localStorage.setItem("compare_min_confidence", String(compareMinConfidence));
     set({ compareMinConfidence });
   },
+
+  reviewLabelMap: {},
+  setReviewLabelMap: (reviewLabelMap) => set({ reviewLabelMap }),
 }));

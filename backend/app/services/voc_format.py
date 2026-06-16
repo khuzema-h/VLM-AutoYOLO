@@ -4,13 +4,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .yolo_format import _get_filtered_boxes
+from .yolo_format import _export_class_name, _get_filtered_boxes
 
 if TYPE_CHECKING:
     from ..models.detection import Detection
 
 
-def detection_to_voc(detection: Detection, class_map: dict[str, int]) -> str:
+def detection_to_voc(
+    detection: Detection,
+    class_map: dict[str, int],
+    label_map: dict[str, str] | None = None,
+) -> str:
     """Convert a detection record to Pascal VOC XML string."""
     img_w = detection.image_width or 1
     img_h = detection.image_height or 1
@@ -26,7 +30,7 @@ def detection_to_voc(detection: Detection, class_map: dict[str, int]) -> str:
     for box in boxes:
         x1, y1, x2, y2 = box["x1"], box["y1"], box["x2"], box["y2"]
         lines.append("  <object>")
-        lines.append(f"    <name>{box['class_name']}</name>")
+        lines.append(f"    <name>{_export_class_name(box['class_name'], label_map)}</name>")
         lines.append("    <pose>Unspecified</pose>")
         lines.append("    <truncated>0</truncated>")
         lines.append("    <difficult>0</difficult>")

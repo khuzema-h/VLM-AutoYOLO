@@ -74,3 +74,15 @@ def test_detection_to_yolo_multiple_boxes():
     assert len(lines) == 2
     assert lines[0] == "0 0.200000 0.300000 0.200000 0.200000"
     assert lines[1] == "1 0.600000 0.700000 0.200000 0.400000"
+
+
+def test_detection_to_yolo_clamps_negative_coords():
+    """Boxes partially outside image must not produce negative YOLO coords."""
+    boxes = [DummyBox(-50, -30, 200, 150, "cat")]
+    det = DummyDetection(boxes, 1000, 1000)
+    class_map = {"cat": 0}
+
+    yolo_str = detection_to_yolo(det, class_map)
+    parts = [float(x) for x in yolo_str.split()[1:]]
+    assert all(0.0 <= v <= 1.0 for v in parts)
+    assert yolo_str == "0 0.100000 0.075000 0.200000 0.150000"

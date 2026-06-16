@@ -62,6 +62,7 @@ declare global {
   const ResultTable: typeof import('./components/ResultTable/index').ResultTable
   const ReviewExportPanel: typeof import('./components/BBoxEditor/ReviewExportPanel').ReviewExportPanel
   const ReviewImageList: typeof import('./components/BBoxEditor/ReviewImageList').ReviewImageList
+  const ReviewLabelMapping: typeof import('./components/BBoxEditor/ReviewLabelMapping').ReviewLabelMapping
   const Sam3Status: typeof import('./components/Sam3Status/index').Sam3Status
   const Sidebar: typeof import('./components/Sidebar/index').Sidebar
   const SidebarHeader: typeof import('./components/Sidebar/Header').SidebarHeader
@@ -79,11 +80,13 @@ declare global {
   const VideoList: typeof import('./components/VideoPanel/VideoList').VideoList
   const VideoPanel: typeof import('./components/VideoPanel/index').VideoPanel
   const VideoValidator: typeof import('./components/VideoValidator/index').VideoValidator
+  const VlmDetectionParams: typeof import('./components/VlmDetectionParams/index').VlmDetectionParams
   const addBox: typeof import('./services/api').addBox
   const applyFilter: typeof import('./lib/filterBoxes').applyFilter
   const autoMapByName: typeof import('./lib/compareLabelMap').autoMapByName
   const batchFileMap: typeof import('./lib/cache').batchFileMap
   const buildCompareReportHtml: typeof import('./lib/compareReportHtml').buildCompareReportHtml
+  const buildExportLabelMap: typeof import('./lib/reviewLabelMap').buildExportLabelMap
   const buildPreviewUrls: typeof import('./lib/processImageFiles').buildPreviewUrls
   const buildReportThumbnails: typeof import('./lib/compareReportThumbnails').buildReportThumbnails
   const buildReviewItems: typeof import('./lib/reviewItems').buildReviewItems
@@ -97,6 +100,7 @@ declare global {
   const checkSam3Health: typeof import('./services/api').checkSam3Health
   const clampBox: typeof import('./lib/bboxHitTest').clampBox
   const clearCompareVlmCache: typeof import('./services/api').clearCompareVlmCache
+  const collectClassNamesFromDetections: typeof import('./lib/reviewLabelMap').collectClassNamesFromDetections
   const collectDroppedFiles: typeof import('./lib/droppedFiles').collectDroppedFiles
   const compareImageUrl: typeof import('./services/api').compareImageUrl
   const createContext: typeof import('react').createContext
@@ -151,6 +155,7 @@ declare global {
   const mapVlmBoxes: typeof import('./lib/compareLabelMap').mapVlmBoxes
   const memo: typeof import('react').memo
   const mergeLabelMap: typeof import('./lib/compareLabelMap').mergeLabelMap
+  const mergeReviewLabelMap: typeof import('./lib/reviewLabelMap').mergeReviewLabelMap
   const optimisticModelLoading: typeof import('./hooks/useModelEvents').optimisticModelLoading
   const optimisticModelUnloaded: typeof import('./hooks/useModelEvents').optimisticModelUnloaded
   const parseCategories: typeof import('./lib/parsers').parseCategories
@@ -319,6 +324,9 @@ declare global {
   // @ts-ignore
   export type { FilterMode } from './lib/filterBoxes'
   import('./lib/filterBoxes')
+  // @ts-ignore
+  export type { ReviewLabelMap } from './lib/reviewLabelMap'
+  import('./lib/reviewLabelMap')
   // @ts-ignore
   export type { YoloSeries, ImportResult, ImportProgress, ChunkInitResult, CompareDataset, CompareImage, PrecomputeTaskStatus, DatasetImagesResponse, CompareBox, CompareAnnotationsResponse, ExportVlmDatasetResult, CompareReportMetrics, CompareReportClassStat, CompareReportSplitStat, CompareReportImageClassStat, CompareReportImageStat, CompareReportResponse } from './services/api'
   import('./services/api')

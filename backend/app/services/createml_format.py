@@ -5,13 +5,17 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from .yolo_format import _get_filtered_boxes
+from .yolo_format import _export_class_name, _get_filtered_boxes
 
 if TYPE_CHECKING:
     from ..models.detection import Detection
 
 
-def _build_createml(detections: list[Detection], class_map: dict[str, int]) -> list[dict]:
+def _build_createml(
+    detections: list[Detection],
+    class_map: dict[str, int],
+    label_map: dict[str, str] | None = None,
+) -> list[dict]:
     """Build CreateML object detection annotations.
 
     Format: [{"imagefilename": "...", "annotations": [{"label": "...", "coordinates": {...}}]}]
@@ -24,7 +28,7 @@ def _build_createml(detections: list[Detection], class_map: dict[str, int]) -> l
             x1, y1, x2, y2 = box["x1"], box["y1"], box["x2"], box["y2"]
             annotations.append(
                 {
-                    "label": box["class_name"],
+                    "label": _export_class_name(box["class_name"], label_map),
                     "coordinates": {
                         "x": x1,
                         "y": y1,
@@ -44,5 +48,9 @@ def _build_createml(detections: list[Detection], class_map: dict[str, int]) -> l
     return results
 
 
-def export_createml_json(detections: list[Detection], class_map: dict[str, int]) -> str:
-    return json.dumps(_build_createml(detections, class_map), ensure_ascii=False, indent=2)
+def export_createml_json(
+    detections: list[Detection],
+    class_map: dict[str, int],
+    label_map: dict[str, str] | None = None,
+) -> str:
+    return json.dumps(_build_createml(detections, class_map, label_map), ensure_ascii=False, indent=2)

@@ -11,6 +11,8 @@ export async function detectImage(
   sam3Threshold?: number,
   sam3MaskThreshold?: number,
   signal?: AbortSignal,
+  maxBBoxArea = 1,
+  minConfidence = 0,
 ): Promise<DetectResponse> {
   const form = new FormData();
   form.append("file", file);
@@ -21,9 +23,13 @@ export async function detectImage(
     if (useSam3Seg === false) form.append("use_sam3_seg", "false");
     if (sam3Threshold != null) form.append("sam3_threshold", String(sam3Threshold));
     if (sam3MaskThreshold != null) form.append("sam3_mask_threshold", String(sam3MaskThreshold));
-  } else if (useSam2) {
-    form.append("use_sam2", "true");
-    if (sam2ScoreThreshold != null) form.append("sam2_score_threshold", String(sam2ScoreThreshold));
+  } else {
+    if (useSam2) {
+      form.append("use_sam2", "true");
+      if (sam2ScoreThreshold != null) form.append("sam2_score_threshold", String(sam2ScoreThreshold));
+    }
+    form.append("max_bbox_area", String(maxBBoxArea));
+    form.append("min_confidence", String(minConfidence));
   }
   const { data } = await request.post<{ data: DetectResponse }>("/detect", form, {
     signal,
@@ -84,10 +90,18 @@ export function exportSingleUrl(id: string): string {
   return `${API_BASE}/detections/${id}/export`;
 }
 
-export async function exportBatch(ids: string[], format = "yolo"): Promise<Blob> {
+export async function exportBatch(
+  ids: string[],
+  format = "yolo",
+  labelMap?: Record<string, string>,
+): Promise<Blob> {
   const { data } = await request.post(
     "/detections/export-batch",
-    { detectionIds: ids, format },
+    {
+      detectionIds: ids,
+      format,
+      ...(labelMap && Object.keys(labelMap).length > 0 ? { labelMap } : {}),
+    },
     { responseType: "blob" },
   );
   return data;

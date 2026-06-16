@@ -17,6 +17,8 @@ class DetectionParams(BaseSchema):
     use_sam3_seg: bool = True
     sam3_threshold: float = 0.5
     sam3_mask_threshold: float = 0.5
+    max_bbox_area_ratio: float = Field(1.0, ge=0.01, le=1.0)
+    min_confidence: float = Field(0.0, ge=0.0, le=1.0)
 
 
 class DetectionBoxOut(BaseSchema):
@@ -90,3 +92,4 @@ class DetectionOut(DetectionListItem):
 class ExportBatchIn(BaseSchema):
     detection_ids: list[str] = Field(..., min_length=1)
     format: str = "yolo"
+    label_map: dict[str, str] = Field(default_factory=dict, alias="labelMap")

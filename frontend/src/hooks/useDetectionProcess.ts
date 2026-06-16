@@ -27,6 +27,8 @@ export function useDetectionProcess() {
     useSam3Seg,
     sam3Threshold,
     sam3MaskThreshold,
+    compareMaxBBoxArea,
+    compareMinConfidence,
     files,
     setFiles,
     setPreviewUrl,
@@ -186,6 +188,8 @@ export function useDetectionProcess() {
         useSam3Seg,
         sam3Threshold,
         sam3MaskThreshold,
+        compareMaxBBoxArea,
+        compareMinConfidence,
         (data, file, i) => {
           batchFileMap.set(data.id, file);
           setBatchResults((prev) => {
@@ -215,6 +219,8 @@ export function useDetectionProcess() {
     useSam3Seg,
     sam3Threshold,
     sam3MaskThreshold,
+    compareMaxBBoxArea,
+    compareMinConfidence,
     validateModelSource,
     externalModelFile,
     selectedTrainedJobId,
@@ -253,6 +259,8 @@ export function useDetectionProcess() {
         useSam3Seg,
         sam3Threshold,
         sam3MaskThreshold,
+        maxBBoxArea: compareMaxBBoxArea,
+        minConfidence: compareMinConfidence,
         signal: ctrl.signal,
       });
       if (data) batchFileMap.set(data.id, file);
@@ -274,6 +282,8 @@ export function useDetectionProcess() {
     useSam3Seg,
     sam3Threshold,
     sam3MaskThreshold,
+    compareMaxBBoxArea,
+    compareMinConfidence,
     newAbortController,
     detectMut,
     timer,

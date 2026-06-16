@@ -1,8 +1,15 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dropdown } from "antd";
 import toast from "react-hot-toast";
 import { downloadBlob, exportBatch } from "@/services/api";
+import { useAppStore } from "@/store/useAppStore";
+import {
+  buildExportLabelMap,
+  collectClassNamesFromDetections,
+  mergeReviewLabelMap,
+} from "@/lib/reviewLabelMap";
+import { ReviewLabelMapping } from "./ReviewLabelMapping";
 import type { Detection } from "@/types";
 
 interface Props {
@@ -12,25 +19,37 @@ interface Props {
 
 export function ReviewExportPanel({ items, categories }: Props) {
   const { t } = useTranslation();
+  const { reviewLabelMap, setReviewLabelMap } = useAppStore();
   const [exporting, setExporting] = useState(false);
+
+  const sourceLabels = useMemo(
+    () => collectClassNamesFromDetections(items, categories),
+    [items, categories],
+  );
+
+  useEffect(() => {
+    setReviewLabelMap(
+      mergeReviewLabelMap(useAppStore.getState().reviewLabelMap, sourceLabels),
+    );
+  }, [sourceLabels.join("\0"), setReviewLabelMap]);
 
   const totalBoxes = useMemo(
     () => items.reduce((sum, d) => sum + d.boxes.length, 0),
     [items],
   );
 
-  const classNames = useMemo(() => {
-    const set = new Set<string>();
-    items.forEach((d) => d.boxes.forEach((b) => set.add(b.className)));
-    categories.forEach((c) => set.add(c));
-    return [...set].sort();
-  }, [items, categories]);
+  const exportClassNames = useMemo(() => {
+    const names = new Set<string>();
+    sourceLabels.forEach((src) => names.add(reviewLabelMap[src]?.trim() || src));
+    return [...names].sort();
+  }, [sourceLabels, reviewLabelMap]);
 
   const handleExport = async (format: string) => {
     if (items.length === 0) return;
     setExporting(true);
     try {
       const ids = items.map((d) => d.id);
+      const labelMap = buildExportLabelMap(reviewLabelMap);
       const labels: Record<string, string> = {
         yolo: "YOLO",
         "yolo-seg": "YOLO_Seg",
@@ -38,7 +57,7 @@ export function ReviewExportPanel({ items, categories }: Props) {
         voc: "VOC",
         createml: "CreateML",
       };
-      const blob = await exportBatch(ids, format);
+      const blob = await exportBatch(ids, format, labelMap);
       downloadBlob(blob, `${labels[format] ?? format}_dataset.zip`);
       toast.success(t("bboxEditor.exportSuccess", { count: items.length }));
     } catch (e) {
@@ -64,18 +83,29 @@ export function ReviewExportPanel({ items, categories }: Props) {
           <span className="font-semibold text-gray-800">{totalBoxes}</span>
         </div>
       </div>
-      {classNames.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {classNames.map((c) => (
-            <span
-              key={c}
-              className="text-[10px] font-medium bg-white border border-gray-200 rounded px-1.5 py-0.5 text-gray-600"
-            >
-              {c}
-            </span>
-          ))}
+
+      <ReviewLabelMapping
+        sourceLabels={sourceLabels}
+        labelMap={reviewLabelMap}
+        onChange={setReviewLabelMap}
+      />
+
+      {exportClassNames.length > 0 && (
+        <div>
+          <p className="text-[10px] text-gray-400 mb-1">{t("bboxEditor.exportClasses")}</p>
+          <div className="flex flex-wrap gap-1">
+            {exportClassNames.map((c) => (
+              <span
+                key={c}
+                className="text-[10px] font-medium bg-white border border-gray-200 rounded px-1.5 py-0.5 text-gray-600"
+              >
+                {c}
+              </span>
+            ))}
+          </div>
         </div>
       )}
+
       <Dropdown
         disabled={items.length === 0 || exporting}
         menu={{
@@ -86,7 +116,7 @@ export function ReviewExportPanel({ items, categories }: Props) {
             { key: "voc", label: "Pascal VOC (.xml)" },
             { key: "createml", label: "CreateML (.json)" },
           ],
-          onClick: ({ key }) => handleExport(key),
+          onClick: ({ key }) => void handleExport(key),
         }}
         trigger={["click"]}
       >

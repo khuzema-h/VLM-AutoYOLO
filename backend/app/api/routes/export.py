@@ -40,7 +40,7 @@ def download_batch_yolo(
     db: Session = Depends(get_db),
 ) -> Response:
     fmt = body.format or "yolo"
-    data = export_batch(db, body.detection_ids, format=fmt)
+    data = export_batch(db, body.detection_ids, format=fmt, label_map=body.label_map or None)
     label = FORMAT_LABELS.get(fmt, fmt)
     return Response(
         content=data,

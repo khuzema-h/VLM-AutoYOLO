@@ -53,3 +53,21 @@ class TestStrategyKwargs:
     def test_vlm_strategy_has_detect_method(self):
         s = VLMDetection(lambda *a, **kw: {})
         assert hasattr(s, "detect")
+
+    def test_vlm_strategy_passes_bbox_filters(self):
+        captured: dict = {}
+
+        def fake_vlm(path, categories, **kwargs):
+            captured.update(kwargs)
+            return {
+                "boxes": [],
+                "img_w": 100,
+                "img_h": 100,
+                "orig_w": 100,
+                "orig_h": 100,
+            }
+
+        s = VLMDetection(fake_vlm)
+        s.detect("img.jpg", ["cat"], max_bbox_area_ratio=0.5, min_confidence=0.3)
+        assert captured["max_bbox_area_ratio"] == 0.5
+        assert captured["min_confidence"] == 0.3

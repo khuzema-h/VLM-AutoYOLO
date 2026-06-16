@@ -41,7 +41,12 @@ class VLMDetection(DetectionStrategy):
         self._vlm_detect = vlm_detect_fn
 
     def detect(self, filepath: str, categories: list[str], **kwargs) -> DetectionResult:
-        result = self._vlm_detect(filepath, categories)
+        result = self._vlm_detect(
+            filepath,
+            categories,
+            max_bbox_area_ratio=kwargs.get("max_bbox_area_ratio", 1.0),
+            min_confidence=kwargs.get("min_confidence", 0.0),
+        )
         boxes = result["boxes"]
         detect_w, detect_h = result["img_w"], result["img_h"]
         orig_w = result.get("orig_w", detect_w)
@@ -80,7 +85,12 @@ class VLMWithSAM2(DetectionStrategy):
     def detect(self, filepath: str, categories: list[str], **kwargs) -> DetectionResult:
         score_threshold = kwargs.get("sam2_score_threshold", 0.0)
 
-        result = self._vlm_detect(filepath, categories)
+        result = self._vlm_detect(
+            filepath,
+            categories,
+            max_bbox_area_ratio=kwargs.get("max_bbox_area_ratio", 1.0),
+            min_confidence=kwargs.get("min_confidence", 0.0),
+        )
         boxes = result["boxes"]
         detect_w, detect_h = result["img_w"], result["img_h"]
         orig_w = result.get("orig_w", detect_w)
