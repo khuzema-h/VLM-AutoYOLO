@@ -47,6 +47,7 @@ class VLMDetection(DetectionStrategy):
             max_bbox_area_ratio=kwargs.get("max_bbox_area_ratio", 1.0),
             min_confidence=kwargs.get("min_confidence", 0.0),
             crop_verification=kwargs.get("crop_verification", False),
+            verification_vlm=kwargs.get("verification_vlm", "qwen3_vl"),
         )
         boxes = result["boxes"]
         detect_w, detect_h = result["img_w"], result["img_h"]
@@ -92,6 +93,7 @@ class VLMWithSAM2(DetectionStrategy):
             max_bbox_area_ratio=kwargs.get("max_bbox_area_ratio", 1.0),
             min_confidence=kwargs.get("min_confidence", 0.0),
             crop_verification=kwargs.get("crop_verification", False),
+            verification_vlm=kwargs.get("verification_vlm", "qwen3_vl"),
         )
         boxes = result["boxes"]
         detect_w, detect_h = result["img_w"], result["img_h"]

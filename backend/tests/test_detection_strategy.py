@@ -88,3 +88,20 @@ class TestStrategyKwargs:
         s = VLMDetection(fake_vlm)
         s.detect("img.jpg", ["cat"], crop_verification=True)
         assert captured["crop_verification"] is True
+
+    def test_vlm_strategy_passes_verification_vlm(self):
+        captured: dict = {}
+
+        def fake_vlm(path, categories, **kwargs):
+            captured.update(kwargs)
+            return {
+                "boxes": [],
+                "img_w": 100,
+                "img_h": 100,
+                "orig_w": 100,
+                "orig_h": 100,
+            }
+
+        s = VLMDetection(fake_vlm)
+        s.detect("img.jpg", ["cat"], crop_verification=True, verification_vlm="qwen3_vl")
+        assert captured["verification_vlm"] == "qwen3_vl"

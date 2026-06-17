@@ -15,4 +15,5 @@ alembic>=1.14.0
 lmdb>=1.4.0
 peft>=0.12.0
 sam2>=1.0.0
+bitsandbytes>=0.45.0; sys_platform == 'linux'
 decord>=0.6.0; sys_platform == 'linux'

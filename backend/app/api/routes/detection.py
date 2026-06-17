@@ -49,6 +49,7 @@ async def create_detection(
     max_bbox_area: float = Form(1.0, ge=0.01, le=1.0),
     min_confidence: float = Form(0.0, ge=0.0, le=1.0),
     crop_verification: bool = Form(False),
+    verification_vlm: str = Form("qwen3_vl"),
     repo: DetectionRepository = Depends(get_repo),
 ) -> APIResponse:
     if not file.content_type or not file.content_type.startswith("image/"):
@@ -66,6 +67,8 @@ async def create_detection(
         raise HTTPException(400, detail="categories must be a JSON array") from exc
     if not cat_list:
         raise HTTPException(400, detail="categories cannot be empty")
+    if verification_vlm not in ("qwen3_vl", "locate_anything"):
+        raise HTTPException(400, detail="verification_vlm must be qwen3_vl or locate_anything")
 
     filepath, safe_name = _save_upload(file)
     original_name = Path(file.filename).name  # type: ignore[arg-type]
@@ -86,6 +89,7 @@ async def create_detection(
                 max_bbox_area_ratio=max_bbox_area,
                 min_confidence=min_confidence,
                 crop_verification=crop_verification,
+                verification_vlm=verification_vlm,
             ),
             repo=repo,
         )

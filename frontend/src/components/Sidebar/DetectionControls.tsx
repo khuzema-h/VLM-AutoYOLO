@@ -39,6 +39,8 @@ export function DetectionControls({
     setCompareMinConfidence,
     cropVerification,
     setCropVerification,
+    verificationVlm,
+    setVerificationVlm,
   } = useAppStore();
 
   return (
@@ -58,9 +60,11 @@ export function DetectionControls({
           maxBBoxArea={compareMaxBBoxArea}
           minConfidence={compareMinConfidence}
           cropVerification={cropVerification}
+          verificationVlm={verificationVlm}
           onMaxBBoxAreaChange={setCompareMaxBBoxArea}
           onMinConfidenceChange={setCompareMinConfidence}
           onCropVerificationChange={setCropVerification}
+          onVerificationVlmChange={setVerificationVlm}
           showCropVerification
           disabled={loading}
         />

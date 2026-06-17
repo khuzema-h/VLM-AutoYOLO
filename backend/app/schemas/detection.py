@@ -20,6 +20,7 @@ class DetectionParams(BaseSchema):
     max_bbox_area_ratio: float = Field(1.0, ge=0.01, le=1.0)
     min_confidence: float = Field(0.0, ge=0.0, le=1.0)
     crop_verification: bool = False
+    verification_vlm: str = "qwen3_vl"
 
 
 class DetectionBoxOut(BaseSchema):

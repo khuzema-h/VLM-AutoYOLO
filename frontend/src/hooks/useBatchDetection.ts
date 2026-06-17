@@ -20,6 +20,7 @@ export function useBatchDetection() {
       maxBBoxArea: number,
       minConfidence: number,
       cropVerification: boolean,
+      verificationVlm: "qwen3_vl" | "locate_anything",
       onEach: (result: Detection, file: File, index: number, elapsed: number) => void,
       signal?: AbortSignal,
     ) => {
@@ -57,6 +58,7 @@ export function useBatchDetection() {
             maxBBoxArea,
             minConfidence,
             cropVerification,
+            verificationVlm,
           );
           results.push(data);
           updateProgress(i);

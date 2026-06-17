@@ -43,6 +43,7 @@ async def process_detection(
         "max_bbox_area_ratio": params.max_bbox_area_ratio,
         "min_confidence": params.min_confidence,
         "crop_verification": params.crop_verification,
+        "verification_vlm": params.verification_vlm,
     }
 
     t0 = time.perf_counter()

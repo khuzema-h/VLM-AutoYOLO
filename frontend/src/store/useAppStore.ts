@@ -99,6 +99,8 @@ interface AppState {
   setCompareMinConfidence: (conf: number) => void;
   cropVerification: boolean;
   setCropVerification: (enabled: boolean) => void;
+  verificationVlm: "qwen3_vl" | "locate_anything";
+  setVerificationVlm: (backend: "qwen3_vl" | "locate_anything") => void;
 
   // Review export label renaming
   reviewLabelMap: ReviewLabelMap;
@@ -250,6 +252,14 @@ export const useAppStore = create<AppState>((set) => ({
   setCropVerification: (cropVerification) => {
     localStorage.setItem("crop_verification", String(cropVerification));
     set({ cropVerification });
+  },
+  verificationVlm: (() => {
+    const saved = localStorage.getItem("verification_vlm");
+    return saved === "locate_anything" ? "locate_anything" : "qwen3_vl";
+  })(),
+  setVerificationVlm: (verificationVlm) => {
+    localStorage.setItem("verification_vlm", verificationVlm);
+    set({ verificationVlm });
   },
 
   reviewLabelMap: {},

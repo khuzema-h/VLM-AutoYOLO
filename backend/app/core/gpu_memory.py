@@ -64,8 +64,10 @@ class CUDAMemoryManager(GPUMemoryManager):
 
     def full_cleanup(self) -> None:
         gc.collect()
+        torch.cuda.synchronize()
         torch.cuda.empty_cache()
         torch.cuda.ipc_collect()
+        gc.collect()
 
     def resolve_max_long_side(self) -> int:
         total_mb = torch.cuda.get_device_properties(0).total_memory // (1024 * 1024)

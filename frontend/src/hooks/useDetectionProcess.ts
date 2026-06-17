@@ -30,6 +30,7 @@ export function useDetectionProcess() {
     compareMaxBBoxArea,
     compareMinConfidence,
     cropVerification,
+    verificationVlm,
     files,
     setFiles,
     setPreviewUrl,
@@ -194,6 +195,7 @@ export function useDetectionProcess() {
         compareMaxBBoxArea,
         compareMinConfidence,
         cropVerification,
+        verificationVlm,
         (data, file, i) => {
           batchFileMap.set(data.id, file);
           setBatchResults((prev) => {
@@ -226,6 +228,7 @@ export function useDetectionProcess() {
     compareMaxBBoxArea,
     compareMinConfidence,
     cropVerification,
+    verificationVlm,
     validateModelSource,
     externalModelFile,
     selectedTrainedJobId,
@@ -267,6 +270,7 @@ export function useDetectionProcess() {
         maxBBoxArea: compareMaxBBoxArea,
         minConfidence: compareMinConfidence,
         cropVerification,
+        verificationVlm,
         signal: ctrl.signal,
       });
       if (data) batchFileMap.set(data.id, file);
@@ -291,6 +295,7 @@ export function useDetectionProcess() {
     compareMaxBBoxArea,
     compareMinConfidence,
     cropVerification,
+    verificationVlm,
     newAbortController,
     detectMut,
     timer,

@@ -31,6 +31,7 @@ export function useDetectMutation() {
       maxBBoxArea,
       minConfidence,
       cropVerification,
+      verificationVlm,
     }: {
       file: File;
       categories: string[];
@@ -44,6 +45,7 @@ export function useDetectMutation() {
       maxBBoxArea?: number;
       minConfidence?: number;
       cropVerification?: boolean;
+      verificationVlm?: "qwen3_vl" | "locate_anything";
       signal?: AbortSignal;
     }) =>
       detectImage(
@@ -60,6 +62,7 @@ export function useDetectMutation() {
         maxBBoxArea,
         minConfidence,
         cropVerification,
+        verificationVlm,
       ),
     onMutate: ({ useSam2 }) => {
       qc.invalidateQueries({ queryKey: ["model-status"] });

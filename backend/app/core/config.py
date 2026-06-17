@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     model_dir: str = ""
     device: str = ""
     model_id: str = "nvidia/LocateAnything-3B"
+    verification_vlm_model_id: str = "Qwen/Qwen3-VL-8B-Instruct"
+    # None = auto (4-bit for 8B+ models on GPUs under 20GB). Set true/false to override.
+    verification_vlm_load_in_4bit: bool | None = None
 
     @property
     def resolved_device(self) -> str:

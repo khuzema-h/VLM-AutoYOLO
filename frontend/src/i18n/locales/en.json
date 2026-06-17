@@ -212,7 +212,12 @@
     "resetThresholds": "Reset thresholds to full range",
     "noImages": "No images to preprocess",
     "cropVerification": "Crop verification",
-    "cropVerificationHint": "After detection, crop each box and ask the VLM to confirm yes/no. Rejected boxes are removed. Slower but reduces false positives."
+    "cropVerificationHint": "After detection, crop each box and run a second VLM yes/no check. Rejected boxes are removed.",
+    "verificationModel": "Verification model",
+    "verificationQwen3Vl": "Qwen3-VL (recommended)",
+    "verificationLocateAnything": "LocateAnything-3B",
+    "verificationQwen3VlHint": "Uses a separate Qwen3-VL model for verification. Better at rejecting false positives; requires extra GPU memory during verify.",
+    "verificationLocateAnythingHint": "Reuses the same LocateAnything model for verification. Faster but less independent than a separate VLM."
   },
   "bboxEditor": {
     "select": "Select / Edit",

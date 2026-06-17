@@ -14,6 +14,7 @@ export async function detectImage(
   maxBBoxArea = 1,
   minConfidence = 0,
   cropVerification = false,
+  verificationVlm: "qwen3_vl" | "locate_anything" = "qwen3_vl",
 ): Promise<DetectResponse> {
   const form = new FormData();
   form.append("file", file);
@@ -31,7 +32,10 @@ export async function detectImage(
     }
     form.append("max_bbox_area", String(maxBBoxArea));
     form.append("min_confidence", String(minConfidence));
-    if (cropVerification) form.append("crop_verification", "true");
+    if (cropVerification) {
+      form.append("crop_verification", "true");
+      form.append("verification_vlm", verificationVlm);
+    }
   }
   const { data } = await request.post<{ data: DetectResponse }>("/detect", form, {
     signal,

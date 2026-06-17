@@ -212,7 +212,12 @@
     "resetThresholds": "重置阈值为全范围",
     "noImages": "没有可预处理的图片",
     "cropVerification": "裁剪复核",
-    "cropVerificationHint": "检测后裁剪每个框，让 VLM 回答是/否；被拒绝的框会被移除。速度较慢，但有助于减少误检。"
+    "cropVerificationHint": "检测后裁剪每个框，由第二个 VLM 做是/否确认，被拒绝的框会被移除。",
+    "verificationModel": "复核模型",
+    "verificationQwen3Vl": "Qwen3-VL（推荐）",
+    "verificationLocateAnything": "LocateAnything-3B",
+    "verificationQwen3VlHint": "使用独立的 Qwen3-VL 做复核，更能剔除误检；复核阶段需要额外显存。",
+    "verificationLocateAnythingHint": "复用 LocateAnything 做复核，速度更快，但与检测模型相同。"
   },
   "bboxEditor": {
     "select": "选择/编辑",

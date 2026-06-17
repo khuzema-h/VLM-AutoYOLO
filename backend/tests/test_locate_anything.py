@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from app.services.locate_anything import (
+from app.services.crop_verify import (
     crop_box_image,
+    parse_verification_answer,
+)
+from app.services.locate_anything import (
     filter_boxes_by_max_area,
     filter_boxes_by_min_confidence,
     parse_boxes,
-    parse_verification_answer,
 )
 
 

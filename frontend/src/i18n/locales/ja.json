@@ -212,7 +212,12 @@
     "resetThresholds": "しきい値を全範囲にリセット",
     "noImages": "前処理する画像がありません",
     "cropVerification": "クロップ検証",
-    "cropVerificationHint": "検出後に各ボックスを切り出し、VLM に yes/no で確認します。拒否されたボックスは削除されます。遅くなりますが誤検出の削減に有効です。"
+    "cropVerificationHint": "検出後に各ボックスを切り出し、別の VLM で yes/no 確認します。拒否されたボックスは削除されます。",
+    "verificationModel": "検証モデル",
+    "verificationQwen3Vl": "Qwen3-VL（推奨）",
+    "verificationLocateAnything": "LocateAnything-3B",
+    "verificationQwen3VlHint": "検証専用の Qwen3-VL を使用。誤検出の除去に有効ですが、検証時に追加の GPU メモリが必要です。",
+    "verificationLocateAnythingHint": "検出と同じ LocateAnything を再利用。高速ですが、独立した VLM ほど効果的ではありません。"
   },
   "bboxEditor": {
     "select": "選択/編集",
