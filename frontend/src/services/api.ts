@@ -13,6 +13,7 @@ export async function detectImage(
   signal?: AbortSignal,
   maxBBoxArea = 1,
   minConfidence = 0,
+  cropVerification = false,
 ): Promise<DetectResponse> {
   const form = new FormData();
   form.append("file", file);
@@ -30,6 +31,7 @@ export async function detectImage(
     }
     form.append("max_bbox_area", String(maxBBoxArea));
     form.append("min_confidence", String(minConfidence));
+    if (cropVerification) form.append("crop_verification", "true");
   }
   const { data } = await request.post<{ data: DetectResponse }>("/detect", form, {
     signal,

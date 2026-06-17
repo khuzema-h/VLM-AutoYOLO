@@ -71,3 +71,20 @@ class TestStrategyKwargs:
         s.detect("img.jpg", ["cat"], max_bbox_area_ratio=0.5, min_confidence=0.3)
         assert captured["max_bbox_area_ratio"] == 0.5
         assert captured["min_confidence"] == 0.3
+
+    def test_vlm_strategy_passes_crop_verification(self):
+        captured: dict = {}
+
+        def fake_vlm(path, categories, **kwargs):
+            captured.update(kwargs)
+            return {
+                "boxes": [],
+                "img_w": 100,
+                "img_h": 100,
+                "orig_w": 100,
+                "orig_h": 100,
+            }
+
+        s = VLMDetection(fake_vlm)
+        s.detect("img.jpg", ["cat"], crop_verification=True)
+        assert captured["crop_verification"] is True

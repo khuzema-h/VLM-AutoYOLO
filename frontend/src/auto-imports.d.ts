@@ -32,6 +32,7 @@ declare global {
   const DEFAULT_EPOCHS: typeof import('./lib/constants').DEFAULT_EPOCHS
   const DEFAULT_IMGSZ: typeof import('./lib/constants').DEFAULT_IMGSZ
   const DEFAULT_IOU: typeof import('./lib/constants').DEFAULT_IOU
+  const DEFAULT_RGB_THRESHOLD: typeof import('./lib/rgbThreshold').DEFAULT_RGB_THRESHOLD
   const DEFAULT_TIMEOUT: typeof import('./services/request').DEFAULT_TIMEOUT
   const DETECT_TIMEOUT: typeof import('./services/request').DETECT_TIMEOUT
   const DatasetImportModal: typeof import('./components/DatasetImportModal/index').DatasetImportModal
@@ -56,6 +57,7 @@ declare global {
   const MetricLink: typeof import('./components/Compare/CompareReportCases').MetricLink
   const ModelSelector: typeof import('./components/ModelSelector/index').ModelSelector
   const ModelStatus: typeof import('./components/ModelStatus/index').ModelStatus
+  const PreprocessPreview: typeof import('./components/Preprocess/PreprocessPreview').PreprocessPreview
   const QueryClient: typeof import('@tanstack/react-query').QueryClient
   const QueryClientProvider: typeof import('@tanstack/react-query').QueryClientProvider
   const REPORT_TIMEOUT: typeof import('./services/request').REPORT_TIMEOUT
@@ -63,6 +65,7 @@ declare global {
   const ReviewExportPanel: typeof import('./components/BBoxEditor/ReviewExportPanel').ReviewExportPanel
   const ReviewImageList: typeof import('./components/BBoxEditor/ReviewImageList').ReviewImageList
   const ReviewLabelMapping: typeof import('./components/BBoxEditor/ReviewLabelMapping').ReviewLabelMapping
+  const RgbThresholdPanel: typeof import('./components/Preprocess/RgbThresholdPanel').RgbThresholdPanel
   const Sam3Status: typeof import('./components/Sam3Status/index').Sam3Status
   const Sidebar: typeof import('./components/Sidebar/index').Sidebar
   const SidebarHeader: typeof import('./components/Sidebar/Header').SidebarHeader
@@ -83,6 +86,9 @@ declare global {
   const VlmDetectionParams: typeof import('./components/VlmDetectionParams/index').VlmDetectionParams
   const addBox: typeof import('./services/api').addBox
   const applyFilter: typeof import('./lib/filterBoxes').applyFilter
+  const applyRgbThresholdBatch: typeof import('./lib/rgbThreshold').applyRgbThresholdBatch
+  const applyRgbThresholdToFile: typeof import('./lib/rgbThreshold').applyRgbThresholdToFile
+  const applyRgbThresholdToImageData: typeof import('./lib/rgbThreshold').applyRgbThresholdToImageData
   const autoMapByName: typeof import('./lib/compareLabelMap').autoMapByName
   const batchFileMap: typeof import('./lib/cache').batchFileMap
   const buildCompareReportHtml: typeof import('./lib/compareReportHtml').buildCompareReportHtml
@@ -142,6 +148,7 @@ declare global {
   const getVideo: typeof import('./services/api').getVideo
   const hitTestBox: typeof import('./lib/bboxHitTest').hitTestBox
   const hitTestHandle: typeof import('./lib/bboxHitTest').hitTestHandle
+  const imageDataToDataUrl: typeof import('./lib/rgbThreshold').imageDataToDataUrl
   const importChunkCancel: typeof import('./services/api').importChunkCancel
   const importChunkComplete: typeof import('./services/api').importChunkComplete
   const importChunkInit: typeof import('./services/api').importChunkInit
@@ -159,6 +166,7 @@ declare global {
   const optimisticModelLoading: typeof import('./hooks/useModelEvents').optimisticModelLoading
   const optimisticModelUnloaded: typeof import('./hooks/useModelEvents').optimisticModelUnloaded
   const parseCategories: typeof import('./lib/parsers').parseCategories
+  const previewRgbThreshold: typeof import('./lib/rgbThreshold').previewRgbThreshold
   const processImageFiles: typeof import('./lib/processImageFiles').processImageFiles
   const renameTrainingJob: typeof import('./services/api').renameTrainingJob
   const request: typeof import('./services/request').request
@@ -327,6 +335,9 @@ declare global {
   // @ts-ignore
   export type { ReviewLabelMap } from './lib/reviewLabelMap'
   import('./lib/reviewLabelMap')
+  // @ts-ignore
+  export type { RgbChannelRange, RgbThresholdSettings } from './lib/rgbThreshold'
+  import('./lib/rgbThreshold')
   // @ts-ignore
   export type { YoloSeries, ImportResult, ImportProgress, ChunkInitResult, CompareDataset, CompareImage, PrecomputeTaskStatus, DatasetImagesResponse, CompareBox, CompareAnnotationsResponse, ExportVlmDatasetResult, CompareReportMetrics, CompareReportClassStat, CompareReportSplitStat, CompareReportImageClassStat, CompareReportImageStat, CompareReportResponse } from './services/api'
   import('./services/api')

@@ -19,6 +19,7 @@ export function useBatchDetection() {
       sam3MaskThreshold: number,
       maxBBoxArea: number,
       minConfidence: number,
+      cropVerification: boolean,
       onEach: (result: Detection, file: File, index: number, elapsed: number) => void,
       signal?: AbortSignal,
     ) => {
@@ -55,6 +56,7 @@ export function useBatchDetection() {
             signal,
             maxBBoxArea,
             minConfidence,
+            cropVerification,
           );
           results.push(data);
           updateProgress(i);

@@ -4,16 +4,22 @@ import { Slider } from "antd";
 interface Props {
   maxBBoxArea: number;
   minConfidence: number;
+  cropVerification: boolean;
   onMaxBBoxAreaChange: (value: number) => void;
   onMinConfidenceChange: (value: number) => void;
+  onCropVerificationChange?: (enabled: boolean) => void;
+  showCropVerification?: boolean;
   disabled?: boolean;
 }
 
 export function VlmDetectionParams({
   maxBBoxArea,
   minConfidence,
+  cropVerification = false,
   onMaxBBoxAreaChange,
   onMinConfidenceChange,
+  onCropVerificationChange,
+  showCropVerification = false,
   disabled,
 }: Props) {
   const { t } = useTranslation();
@@ -61,6 +67,26 @@ export function VlmDetectionParams({
         />
         <p className="text-[10px] text-gray-400 leading-snug">{t("compare.minConfidenceHint")}</p>
       </div>
+
+      {showCropVerification && onCropVerificationChange && (
+        <div className="flex flex-col gap-1.5 pt-2 border-t border-gray-100">
+          <label className="flex items-start gap-2 text-xs text-gray-600 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={cropVerification}
+              onChange={(e) => onCropVerificationChange(e.target.checked)}
+              disabled={disabled}
+              className="mt-0.5 h-3.5 w-3.5 rounded border-gray-300 text-primary-600"
+            />
+            <span>
+              <span className="font-semibold text-gray-700">{t("preprocess.cropVerification")}</span>
+              <span className="block text-[10px] text-gray-400 leading-snug mt-0.5">
+                {t("preprocess.cropVerificationHint")}
+              </span>
+            </span>
+          </label>
+        </div>
+      )}
     </div>
   );
 }

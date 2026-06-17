@@ -8,7 +8,7 @@ import { CompareProvider } from "@/components/Compare/CompareContext";
 import { CompareImageList } from "@/components/Compare/CompareImageList";
 import { ReviewImageList } from "@/components/BBoxEditor/ReviewImageList";
 import { BBoxEditorMain } from "@/components/BBoxEditor/BBoxEditorMain";
-import { buildReviewItems } from "@/lib/reviewItems";
+import { PreprocessPreview } from "@/components/Preprocess/PreprocessPreview";
 import { useReviewSelection } from "@/hooks/useReviewSelection";
 import { batchFileMap } from "@/lib/cache";
 import { useTranslation } from "react-i18next";
@@ -21,6 +21,7 @@ export function Home() {
   const { t } = useTranslation();
   const {
     appMode,
+    annotateSubTab,
     validateModelSource,
     selectedTrainedJobId,
     externalModelFile,
@@ -170,13 +171,20 @@ export function Home() {
               />
             )}
 
-            {!validateVideoId && !displayResult && !previewUrl && (
+            {!validateVideoId &&
+              !displayResult &&
+              !previewUrl &&
+              !(appMode === "annotate" && annotateSubTab === "preprocess") && (
               <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
                 {t("home.placeholderDefault")}
               </div>
             )}
 
-            {previewUrl && !validateVideoId && (
+            {appMode === "annotate" && annotateSubTab === "preprocess" && !validateVideoId && (
+              <PreprocessPreview />
+            )}
+
+            {previewUrl && !validateVideoId && !(appMode === "annotate" && annotateSubTab === "preprocess") && (
               <ErrorBoundary>
                 <DetectionResult
                   result={displayResult}

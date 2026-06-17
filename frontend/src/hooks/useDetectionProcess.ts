@@ -29,6 +29,7 @@ export function useDetectionProcess() {
     sam3MaskThreshold,
     compareMaxBBoxArea,
     compareMinConfidence,
+    cropVerification,
     files,
     setFiles,
     setPreviewUrl,
@@ -75,6 +76,7 @@ export function useDetectionProcess() {
   const handleFiles = useCallback(
     (fs: File[]) => {
       setFiles(fs);
+      useAppStore.setState({ originalFiles: fs, preprocessApplied: false });
       setBatchResults([]);
       setResult(null);
       setPreviewUrl(fs.length === 1 ? getFileUrl(fs[0]) : null);
@@ -85,6 +87,7 @@ export function useDetectionProcess() {
   const handleSelectKeyframe = useCallback(
     (fs: File[]) => {
       setFiles(fs);
+      useAppStore.setState({ originalFiles: fs, preprocessApplied: false });
       setPreviewUrl(fs.length === 1 ? getFileUrl(fs[0]) : null);
       setBatchResults([]);
       setResult(null);
@@ -190,6 +193,7 @@ export function useDetectionProcess() {
         sam3MaskThreshold,
         compareMaxBBoxArea,
         compareMinConfidence,
+        cropVerification,
         (data, file, i) => {
           batchFileMap.set(data.id, file);
           setBatchResults((prev) => {
@@ -221,6 +225,7 @@ export function useDetectionProcess() {
     sam3MaskThreshold,
     compareMaxBBoxArea,
     compareMinConfidence,
+    cropVerification,
     validateModelSource,
     externalModelFile,
     selectedTrainedJobId,
@@ -261,6 +266,7 @@ export function useDetectionProcess() {
         sam3MaskThreshold,
         maxBBoxArea: compareMaxBBoxArea,
         minConfidence: compareMinConfidence,
+        cropVerification,
         signal: ctrl.signal,
       });
       if (data) batchFileMap.set(data.id, file);
@@ -284,6 +290,7 @@ export function useDetectionProcess() {
     sam3MaskThreshold,
     compareMaxBBoxArea,
     compareMinConfidence,
+    cropVerification,
     newAbortController,
     detectMut,
     timer,

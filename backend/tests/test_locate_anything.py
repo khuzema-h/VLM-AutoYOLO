@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from app.services.locate_anything import (
+    crop_box_image,
     filter_boxes_by_max_area,
     filter_boxes_by_min_confidence,
     parse_boxes,
+    parse_verification_answer,
 )
 
 
@@ -82,3 +84,20 @@ def test_filter_boxes_by_max_area():
     assert len(filtered) == 1
     assert filtered[0]["class_name"] == "small"
     assert filter_boxes_by_max_area(boxes, 1000, 1000, 1.0) == boxes
+
+
+def test_parse_verification_answer():
+    assert parse_verification_answer("yes") is True
+    assert parse_verification_answer("No, there is no cat.") is False
+    assert parse_verification_answer("maybe") is True
+    assert parse_verification_answer("I think the answer is yes.") is True
+
+
+def test_crop_box_image_padding():
+    from PIL import Image
+
+    img = Image.new("RGB", (100, 100), color=(255, 255, 255))
+    box = {"x1": 40, "y1": 40, "x2": 60, "y2": 60}
+    crop = crop_box_image(img, box, padding_ratio=0.5)
+    assert crop.size[0] >= 20
+    assert crop.size[1] >= 20

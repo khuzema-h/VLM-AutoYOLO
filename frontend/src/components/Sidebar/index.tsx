@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { useTranslation } from "react-i18next";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ImageUploader } from "@/components/ImageUploader";
 import { HistoryList } from "@/components/HistoryList";
@@ -15,6 +17,7 @@ import type { Detection } from "@/types";
 import { useAppStore } from "@/store/useAppStore";
 import { CompareSidebar } from "@/components/Compare/CompareSidebar";
 import { ReviewExportPanel } from "@/components/BBoxEditor/ReviewExportPanel";
+import { RgbThresholdPanel } from "@/components/Preprocess/RgbThresholdPanel";
 import { batchFileMap, getFileUrl } from "@/lib/cache";
 import { API_BASE } from "@/lib/constants";
 import { getDetection } from "@/services/api";
@@ -61,6 +64,7 @@ export function Sidebar({
   const { t } = useTranslation();
   const {
     appMode, setAppMode,
+    annotateSubTab, setAnnotateSubTab,
     validateModelSource, setValidateModelSource,
     selectedTrainedJobId, setSelectedTrainedJobId,
     inputMode, setInputMode,
@@ -167,6 +171,25 @@ export function Sidebar({
 
           {useSam3 ? <Sam3Status /> : <ModelStatus />}
 
+          {appMode === "annotate" && (
+            <div className="flex gap-1 rounded bg-gray-100 p-0.5 mb-2">
+              {(["detect", "preprocess"] as const).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setAnnotateSubTab(tab)}
+                  className={`flex-1 rounded px-3 py-1.5 text-xs font-medium transition-colors ${
+                    annotateSubTab === tab
+                      ? "bg-white text-primary-600 shadow-sm"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  {tab === "detect" ? t("preprocess.detectTab") : t("preprocess.preprocessTab")}
+                </button>
+              ))}
+            </div>
+          )}
+
           {appMode === "validate" && (
             <ValidationSettings
               selectedJobId={selectedTrainedJobId}
@@ -188,7 +211,13 @@ export function Sidebar({
               {(["image", "video"] as const).map((mode) => (
                 <button
                   key={mode}
-                  onClick={() => { setInputMode(mode); setFiles([]); setPreviewUrl(null); setBatch([]); }}
+                  onClick={() => {
+                    setInputMode(mode);
+                    setFiles([]);
+                    useAppStore.setState({ originalFiles: [], preprocessApplied: false });
+                    setPreviewUrl(null);
+                    setBatch([]);
+                  }}
                   className={`flex-1 rounded px-3 py-1.5 text-xs font-medium transition-colors ${
                     inputMode === mode
                       ? "bg-white text-primary-600 shadow-sm"
@@ -202,7 +231,12 @@ export function Sidebar({
             {inputMode === "image" ? (
               <ImageUploader
                 onFiles={handleFiles}
-                onClear={() => { setFiles([]); setPreviewUrl(null); setBatch([]); }}
+                onClear={() => {
+                  setFiles([]);
+                  useAppStore.setState({ originalFiles: [], preprocessApplied: false });
+                  setPreviewUrl(null);
+                  setBatch([]);
+                }}
                 onProcessingChange={setFilesProcessing}
                 disabled={loading}
               />
@@ -219,7 +253,12 @@ export function Sidebar({
             )}
           </div>
 
-          {!(appMode === "validate" && inputMode === "video" && validateVideoId) && (
+          {appMode === "annotate" && annotateSubTab === "preprocess" && inputMode === "image" && (
+            <RgbThresholdPanel />
+          )}
+
+          {!(appMode === "validate" && inputMode === "video" && validateVideoId) &&
+            !(appMode === "annotate" && annotateSubTab === "preprocess") && (
             <DetectionControls
               recentCategories={recentCategories}
               loading={loading || filesProcessing}

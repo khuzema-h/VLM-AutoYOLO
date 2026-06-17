@@ -2,11 +2,17 @@ import { create } from "zustand";
 import type { CompareLabelMap } from "@/lib/compareLabelMap";
 import type { ReviewLabelMap } from "@/lib/reviewLabelMap";
 import type { FilterMode } from "@/lib/filterBoxes";
+import {
+  DEFAULT_RGB_THRESHOLD,
+  type RgbThresholdSettings,
+} from "@/lib/rgbThreshold";
 
 interface AppState {
   // Model Config
   appMode: "annotate" | "validate" | "compare" | "review";
   setAppMode: (mode: "annotate" | "validate" | "compare" | "review") => void;
+  annotateSubTab: "detect" | "preprocess";
+  setAnnotateSubTab: (tab: "detect" | "preprocess") => void;
   useSam2: boolean;
   setUseSam2: (v: boolean) => void;
   useSam3: boolean;
@@ -27,6 +33,12 @@ interface AppState {
   setInputMode: (mode: "image" | "video") => void;
   files: File[];
   setFiles: (files: File[]) => void;
+  originalFiles: File[];
+  setOriginalFiles: (files: File[]) => void;
+  preprocessRgb: RgbThresholdSettings;
+  setPreprocessRgb: (settings: RgbThresholdSettings) => void;
+  preprocessApplied: boolean;
+  setPreprocessApplied: (applied: boolean) => void;
   previewUrl: string | null;
   setPreviewUrl: (url: string | null) => void;
   categories: string[];
@@ -85,6 +97,8 @@ interface AppState {
   setCompareMaxBBoxArea: (ratio: number) => void;
   compareMinConfidence: number;
   setCompareMinConfidence: (conf: number) => void;
+  cropVerification: boolean;
+  setCropVerification: (enabled: boolean) => void;
 
   // Review export label renaming
   reviewLabelMap: ReviewLabelMap;
@@ -95,6 +109,8 @@ export const useAppStore = create<AppState>((set) => ({
   // Model Config
   appMode: "annotate",
   setAppMode: (mode) => set({ appMode: mode }),
+  annotateSubTab: "detect",
+  setAnnotateSubTab: (annotateSubTab) => set({ annotateSubTab }),
   useSam2: false,
   setUseSam2: (useSam2) => set({ useSam2 }),
   useSam3: false,
@@ -115,6 +131,33 @@ export const useAppStore = create<AppState>((set) => ({
   setInputMode: (inputMode) => set({ inputMode }),
   files: [],
   setFiles: (files) => set({ files }),
+  originalFiles: [],
+  setOriginalFiles: (originalFiles) => set({ originalFiles }),
+  preprocessRgb: (() => {
+    try {
+      const saved = localStorage.getItem("preprocess_rgb");
+      if (saved) {
+        const parsed = JSON.parse(saved) as RgbThresholdSettings;
+        if (
+          parsed?.r?.length === 2 &&
+          parsed?.g?.length === 2 &&
+          parsed?.b?.length === 2 &&
+          (parsed.background === "black" || parsed.background === "white")
+        ) {
+          return parsed;
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+    return DEFAULT_RGB_THRESHOLD;
+  })(),
+  setPreprocessRgb: (preprocessRgb) => {
+    localStorage.setItem("preprocess_rgb", JSON.stringify(preprocessRgb));
+    set({ preprocessRgb });
+  },
+  preprocessApplied: false,
+  setPreprocessApplied: (preprocessApplied) => set({ preprocessApplied }),
   previewUrl: null,
   setPreviewUrl: (previewUrl) => set({ previewUrl }),
   categories: [],
@@ -201,6 +244,12 @@ export const useAppStore = create<AppState>((set) => ({
   setCompareMinConfidence: (compareMinConfidence) => {
     localStorage.setItem("compare_min_confidence", String(compareMinConfidence));
     set({ compareMinConfidence });
+  },
+
+  cropVerification: localStorage.getItem("crop_verification") === "true",
+  setCropVerification: (cropVerification) => {
+    localStorage.setItem("crop_verification", String(cropVerification));
+    set({ cropVerification });
   },
 
   reviewLabelMap: {},

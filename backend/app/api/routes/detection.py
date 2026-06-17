@@ -48,6 +48,7 @@ async def create_detection(
     sam3_mask_threshold: float = Form(0.5, ge=0.0, le=1.0),
     max_bbox_area: float = Form(1.0, ge=0.01, le=1.0),
     min_confidence: float = Form(0.0, ge=0.0, le=1.0),
+    crop_verification: bool = Form(False),
     repo: DetectionRepository = Depends(get_repo),
 ) -> APIResponse:
     if not file.content_type or not file.content_type.startswith("image/"):
@@ -84,6 +85,7 @@ async def create_detection(
                 sam3_mask_threshold=sam3_mask_threshold,
                 max_bbox_area_ratio=max_bbox_area,
                 min_confidence=min_confidence,
+                crop_verification=crop_verification,
             ),
             repo=repo,
         )

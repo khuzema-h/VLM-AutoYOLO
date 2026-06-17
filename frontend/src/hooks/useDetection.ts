@@ -30,6 +30,7 @@ export function useDetectMutation() {
       signal,
       maxBBoxArea,
       minConfidence,
+      cropVerification,
     }: {
       file: File;
       categories: string[];
@@ -42,6 +43,7 @@ export function useDetectMutation() {
       sam3MaskThreshold?: number;
       maxBBoxArea?: number;
       minConfidence?: number;
+      cropVerification?: boolean;
       signal?: AbortSignal;
     }) =>
       detectImage(
@@ -57,6 +59,7 @@ export function useDetectMutation() {
         signal,
         maxBBoxArea,
         minConfidence,
+        cropVerification,
       ),
     onMutate: ({ useSam2 }) => {
       qc.invalidateQueries({ queryKey: ["model-status"] });
