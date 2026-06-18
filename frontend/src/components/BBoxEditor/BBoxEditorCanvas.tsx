@@ -70,6 +70,7 @@ export function BBoxEditorCanvas({
   const [previewBox, setPreviewBox] = useState<BBox | null>(null);
   const [showBBox, setShowBBox] = useState(true);
   const [showMask, setShowMask] = useState(true);
+  const [showLabels, setShowLabels] = useState(true);
   const loadIdRef = useRef(0);
 
   useEffect(() => {
@@ -134,12 +135,20 @@ export function BBoxEditorCanvas({
             (box.x2 - box.x1) * scale,
             (box.y2 - box.y1) * scale,
             selected ? "#2563EB" : color,
-            box.className,
             selected ? 3 : 2,
           );
           if (selected && mode === "select") {
             drawHandles(ctx, box, scale);
           }
+        }
+        if (showLabels && box.className) {
+          drawLabel(
+            ctx,
+            box.x1 * scale,
+            box.y1 * scale,
+            box.className,
+            selected ? "#2563EB" : color,
+          );
         }
       });
 
@@ -148,7 +157,7 @@ export function BBoxEditorCanvas({
         const y = Math.min(drag.startY, drag.currentY);
         const w = Math.abs(drag.currentX - drag.startX);
         const h = Math.abs(drag.currentY - drag.startY);
-        drawRect(ctx, x, y, w, h, "#FF9800", "", 2);
+        drawRect(ctx, x, y, w, h, "#FF9800", 2);
       }
     };
   }, [
@@ -161,6 +170,7 @@ export function BBoxEditorCanvas({
     actualH,
     showBBox,
     showMask,
+    showLabels,
     selectedBoxId,
     mode,
   ]);
@@ -328,6 +338,15 @@ export function BBoxEditorCanvas({
           />
           {t("common.mask")}
         </label>
+        <label className="flex items-center gap-1 text-xs cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showLabels}
+            onChange={(e) => setShowLabels(e.target.checked)}
+            className="h-3 w-3 rounded"
+          />
+          {t("common.labels")}
+        </label>
         {mode === "select" && (
           <span className="text-xs text-gray-400">{t("bboxEditor.selectHint")}</span>
         )}
@@ -388,22 +407,28 @@ function drawRect(
   w: number,
   h: number,
   color: string,
-  label: string,
   lineWidth = 2,
 ) {
   ctx.strokeStyle = color;
   ctx.lineWidth = lineWidth;
   ctx.strokeRect(x, y, w, h);
-  if (label) {
-    ctx.font = "12px system-ui, sans-serif";
-    const tw = ctx.measureText(label).width + 8;
-    const labelY = y < 18 ? y + 2 : y - 18;
-    const textY = y < 18 ? y + 14 : y - 6;
-    ctx.fillStyle = color;
-    ctx.fillRect(x, labelY, tw, 18);
-    ctx.fillStyle = "#fff";
-    ctx.fillText(label, x + 4, textY);
-  }
+}
+
+function drawLabel(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  label: string,
+  color: string,
+) {
+  ctx.font = "12px system-ui, sans-serif";
+  const tw = ctx.measureText(label).width + 8;
+  const labelY = y < 18 ? y + 2 : y - 18;
+  const textY = y < 18 ? y + 14 : y - 6;
+  ctx.fillStyle = color;
+  ctx.fillRect(x, labelY, tw, 18);
+  ctx.fillStyle = "#fff";
+  ctx.fillText(label, x + 4, textY);
 }
 
 function drawHandles(ctx: CanvasRenderingContext2D, box: BBox, scale: number) {

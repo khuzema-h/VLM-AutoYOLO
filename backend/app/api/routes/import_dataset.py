@@ -94,73 +94,6 @@ async def chunk_init(request: Request) -> APIResponse:
     )
 
 
-@router.post("/datasets/import/chunk/{upload_id}/{chunk_index}")
-async def chunk_upload(
-    upload_id: str,
-    chunk_index: int,
-    request: Request,
-) -> APIResponse:
-    """Upload a single chunk."""
-    chunk_dir = CHUNK_DIR / upload_id
-    if not chunk_dir.exists():
-        raise HTTPException(404, "Upload session not found. Call /chunk/init first.")
-
-    meta_path = chunk_dir / "meta.json"
-    if not meta_path.exists():
-        raise HTTPException(400, "Upload session metadata missing")
-
-    meta = json.loads(meta_path.read_text())
-    if chunk_index < 0 or chunk_index >= meta["totalChunks"]:
-        raise HTTPException(400, f"Invalid chunk index: {chunk_index}")
-
-    # Reject oversize before reading body (Content-Length header)
-    max_expected = meta["chunkSize"]
-    content_length = request.headers.get("content-length")
-    if content_length is not None:
-        try:
-            if int(content_length) > max_expected:
-                raise HTTPException(
-                    400,
-                    f"Chunk too large: {content_length} bytes (max {max_expected})",
-                )
-        except ValueError:
-            raise HTTPException(400, "Invalid Content-Length header") from None
-
-    chunk_data = await request.body()
-    if len(chunk_data) > max_expected:
-        raise HTTPException(400, f"Chunk too large: {len(chunk_data)} bytes (max {max_expected})")
-
-    chunk_path = chunk_dir / f"chunk_{chunk_index}"
-    chunk_path.write_bytes(chunk_data)
-
-    return APIResponse(data={"ok": True, "chunk": chunk_index})
-
-
-@router.get("/datasets/import/chunk/{upload_id}")
-def chunk_status(upload_id: str) -> APIResponse:
-    """Check chunk upload status (for resume)."""
-    chunk_dir = CHUNK_DIR / upload_id
-    if not chunk_dir.exists():
-        raise HTTPException(404, "Upload session not found")
-
-    meta = {}
-    meta_path = chunk_dir / "meta.json"
-    if meta_path.exists():
-        meta = json.loads(meta_path.read_text())
-
-    uploaded = sorted(
-        int(p.name.replace("chunk_", "")) for p in chunk_dir.glob("chunk_*") if p.stat().st_size > 0
-    )
-
-    return APIResponse(
-        data={
-            "uploadId": upload_id,
-            "totalChunks": meta.get("totalChunks", 0),
-            "uploadedChunks": uploaded,
-        }
-    )
-
-
 @router.post("/datasets/import/chunk/{upload_id}/complete")
 def chunk_complete(
     upload_id: str,
@@ -262,6 +195,73 @@ def chunk_cancel(upload_id: str) -> APIResponse:
     if cancel_event:
         cancel_event.set()
     return APIResponse(data={"ok": True})
+
+
+@router.post("/datasets/import/chunk/{upload_id}/{chunk_index}")
+async def chunk_upload(
+    upload_id: str,
+    chunk_index: int,
+    request: Request,
+) -> APIResponse:
+    """Upload a single chunk."""
+    chunk_dir = CHUNK_DIR / upload_id
+    if not chunk_dir.exists():
+        raise HTTPException(404, "Upload session not found. Call /chunk/init first.")
+
+    meta_path = chunk_dir / "meta.json"
+    if not meta_path.exists():
+        raise HTTPException(400, "Upload session metadata missing")
+
+    meta = json.loads(meta_path.read_text())
+    if chunk_index < 0 or chunk_index >= meta["totalChunks"]:
+        raise HTTPException(400, f"Invalid chunk index: {chunk_index}")
+
+    # Reject oversize before reading body (Content-Length header)
+    max_expected = meta["chunkSize"]
+    content_length = request.headers.get("content-length")
+    if content_length is not None:
+        try:
+            if int(content_length) > max_expected:
+                raise HTTPException(
+                    400,
+                    f"Chunk too large: {content_length} bytes (max {max_expected})",
+                )
+        except ValueError:
+            raise HTTPException(400, "Invalid Content-Length header") from None
+
+    chunk_data = await request.body()
+    if len(chunk_data) > max_expected:
+        raise HTTPException(400, f"Chunk too large: {len(chunk_data)} bytes (max {max_expected})")
+
+    chunk_path = chunk_dir / f"chunk_{chunk_index}"
+    chunk_path.write_bytes(chunk_data)
+
+    return APIResponse(data={"ok": True, "chunk": chunk_index})
+
+
+@router.get("/datasets/import/chunk/{upload_id}")
+def chunk_status(upload_id: str) -> APIResponse:
+    """Check chunk upload status (for resume)."""
+    chunk_dir = CHUNK_DIR / upload_id
+    if not chunk_dir.exists():
+        raise HTTPException(404, "Upload session not found")
+
+    meta = {}
+    meta_path = chunk_dir / "meta.json"
+    if meta_path.exists():
+        meta = json.loads(meta_path.read_text())
+
+    uploaded = sorted(
+        int(p.name.replace("chunk_", "")) for p in chunk_dir.glob("chunk_*") if p.stat().st_size > 0
+    )
+
+    return APIResponse(
+        data={
+            "uploadId": upload_id,
+            "totalChunks": meta.get("totalChunks", 0),
+            "uploadedChunks": uploaded,
+        }
+    )
 
 
 # ── Direct upload (small files) ─────────────────────

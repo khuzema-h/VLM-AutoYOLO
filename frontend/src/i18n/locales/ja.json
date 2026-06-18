@@ -24,6 +24,7 @@
     "draw": "描画",
     "bbox": "検出枠",
     "mask": "領域",
+    "labels": "ラベル",
     "themeLight": "明色模式",
     "themeDark": "暗色模式",
     "themeSystem": "系統設定"
@@ -235,7 +236,9 @@
     "imageCount": "画像数",
     "boxCount": "ボックス数",
     "exportDataset": "データセットをエクスポート ({{count}} 枚)",
-    "exportHint": "編集は自動保存されます。必要に応じて上でクラス名を変更してからエクスポートしてください。",
+    "exportProject": "プロジェクト（エディタで再開）",
+    "importProject": "プロジェクト ZIP をインポート",
+    "exportHint": "別マシンで編集を続ける場合はプロジェクトをエクスポートし、BBox レビュー → プロジェクト ZIP インポートを使用してください。YOLO/COCO は学習ツール用です。",
     "labelMapping": "クラス名",
     "resetClassNames": "名前をリセット",
     "labelMappingHint": "保存済み标注を変えずに、エクスポート用のクラス名を変更できます。",

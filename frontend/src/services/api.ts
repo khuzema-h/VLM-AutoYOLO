@@ -336,11 +336,9 @@ export async function importChunkInit(
   return data.data;
 }
 
-export async function importChunkComplete(uploadId: string, format: string): Promise<ImportResult> {
+export async function importChunkComplete(uploadId: string): Promise<ImportResult> {
   const { data } = await request.post<{ data: ImportResult }>(
     `/datasets/import/chunk/${uploadId}/complete`,
-    null,
-    { params: { format } },
   );
   return data.data;
 }

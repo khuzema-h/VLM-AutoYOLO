@@ -1,6 +1,7 @@
 import { Select, Modal } from "antd";
 
 const FORMATS = [
+  { value: "autoyolo", label: "VLM-AutoYOLO Project" },
   { value: "yolo", label: "YOLO" },
   { value: "yolo-seg", label: "YOLO Segmentation" },
   { value: "coco", label: "COCO JSON" },
@@ -13,14 +14,15 @@ type UploadStatus = "idle" | "uploading" | "assembling" | "importing" | "complet
 interface Props {
   open: boolean;
   onClose: () => void;
+  defaultFormat?: string;
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 * 1024; // 10GB
 
-export function DatasetImportModal({ open, onClose }: Props) {
+export function DatasetImportModal({ open, onClose, defaultFormat = "yolo" }: Props) {
   const { t } = useTranslation();
   const qc = useQueryClient();
-  const [fmt, setFmt] = useState("yolo");
+  const [fmt, setFmt] = useState(defaultFormat);
   const [file, setFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [status, setStatus] = useState<UploadStatus>("idle");
@@ -49,6 +51,10 @@ export function DatasetImportModal({ open, onClose }: Props) {
     workerRef.current?.terminate();
     if (pollRef.current) clearInterval(pollRef.current);
   }, []);
+
+  useEffect(() => {
+    if (open) setFmt(defaultFormat);
+  }, [open, defaultFormat]);
 
   // ── File selection ───────────────────────────────
   const handleFile = useCallback((f: File | null) => {
@@ -115,7 +121,7 @@ export function DatasetImportModal({ open, onClose }: Props) {
           setUploadId(msg.uploadId);
           setStatus("assembling");
           // Signal backend to assemble and import
-          importChunkComplete(msg.uploadId, fmt).then((result) => {
+          importChunkComplete(msg.uploadId).then((result) => {
             setUploadId(result.importId);
             setStatus("importing");
             pollImport(result.importId);

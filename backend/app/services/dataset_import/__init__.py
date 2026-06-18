@@ -7,9 +7,11 @@ import logging
 import tempfile
 import threading
 import zipfile
+import contextlib
 from pathlib import Path
 
 from ...repositories.detection import DetectionRepository
+from .autoyolo import parse_autoyolo_zip
 from .coco import parse_coco_zip
 from .createml import parse_createml_zip
 from .voc import parse_voc_zip
@@ -18,7 +20,7 @@ from .yolo_seg import parse_yolo_seg_zip
 
 logger = logging.getLogger(__name__)
 
-IMPORT_FORMATS = {"yolo", "yolo-seg", "coco", "voc", "createml"}
+IMPORT_FORMATS = {"yolo", "yolo-seg", "coco", "voc", "createml", "autoyolo"}
 BATCH_SIZE = 20
 
 _PARSERS = {
@@ -27,6 +29,7 @@ _PARSERS = {
     "coco": parse_coco_zip,
     "voc": parse_voc_zip,
     "createml": parse_createml_zip,
+    "autoyolo": parse_autoyolo_zip,
 }
 
 
@@ -76,16 +79,37 @@ def import_dataset(
 
 def _import_one(db, repo: DetectionRepository, item: dict) -> None:
     """Import a single parsed image + boxes into the database."""
+    categories = item.get("categories") or []
+    if categories and isinstance(categories[0], list):
+        categories = categories[0]
+
     det = repo.create(
         image_path=item["image_path"],
         image_name=item["image_name"],
         image_width=item["image_width"],
         image_height=item["image_height"],
-        categories=[item.get("categories", [])] if item.get("categories") else [],
+        categories=list(categories),
         model_name="imported",
     )
-    det.model_type = None
-    det.filter_mode = "all"
+
+    model_type = item.get("model_type")
+    if model_type:
+        from ...models.detection import ModelType
+
+        with contextlib.suppress(ValueError):
+            det.model_type = ModelType(model_type)
+
+    filter_mode = item.get("filter_mode")
+    if filter_mode:
+        from ...models.detection import FilterMode
+
+        with contextlib.suppress(ValueError):
+            det.filter_mode = FilterMode(filter_mode)
+
+    if item.get("filter_nms_iou") is not None:
+        det.filter_nms_iou = float(item["filter_nms_iou"])
+    elif filter_mode is None:
+        det.filter_mode = "all"
 
     item["detection_id"] = str(det.id)
 

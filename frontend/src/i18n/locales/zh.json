@@ -24,6 +24,7 @@
     "draw": "标注",
     "bbox": "BBox",
     "mask": "Mask",
+    "labels": "标签",
     "themeLight": "切换到亮色模式",
     "themeDark": "切换到暗色模式",
     "themeSystem": "跟随系统主题"
@@ -235,7 +236,9 @@
     "imageCount": "图片数",
     "boxCount": "框体数",
     "exportDataset": "导出数据集 ({{count}} 张)",
-    "exportHint": "编辑会自动保存。可在上方重命名类别后再导出。",
+    "exportProject": "项目包（可在编辑器中重新打开）",
+    "importProject": "导入项目 ZIP",
+    "exportHint": "使用「项目包」导出可在另一台机器继续编辑；在目标机器打开 BBox 审核 → 导入项目 ZIP。YOLO/COCO 等格式用于训练工具。",
     "labelMapping": "类别名称",
     "resetClassNames": "重置名称",
     "labelMappingHint": "导出时可重命名类别，不会修改已保存的标注。",

@@ -7,6 +7,7 @@ import zipfile
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from .autoyolo_format import export_project_zip
 from .coco_format import export_coco_json
 from .createml_format import export_createml_json
 from .voc_format import detection_to_voc
@@ -23,6 +24,7 @@ if TYPE_CHECKING:
     from ..models.detection import Detection
 
 FORMAT_LABELS = {
+    "autoyolo": "VLM-AutoYOLO Project",
     "yolo": "YOLO",
     "yolo-seg": "YOLO Segmentation",
     "coco": "COCO JSON",
@@ -65,6 +67,8 @@ def export_batch(
 
     unified_map = _build_class_map(dets, label_map)
 
+    if format == "autoyolo":
+        return export_project_zip(dets)
     if format == "yolo":
         return _export_yolo(dets, unified_map, label_map=label_map)
     if format == "yolo-seg":
@@ -107,6 +111,8 @@ def _export_coco(
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("annotations.json", export_coco_json(dets, unified_map, label_map))
+        for det in dets:
+            zf.write(det.image_path, f"images/{Path(det.image_name).name}")
     buf.seek(0)
     return buf.getvalue()
 
@@ -122,6 +128,7 @@ def _export_voc(
         for det in dets:
             base = _unique_base(det, seen_names)
             zf.writestr(f"{base}.xml", detection_to_voc(det, unified_map, label_map))
+            zf.write(det.image_path, f"images/{Path(det.image_name).name}")
     buf.seek(0)
     return buf.getvalue()
 
@@ -134,6 +141,8 @@ def _export_createml(
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("annotations.json", export_createml_json(dets, unified_map, label_map))
+        for det in dets:
+            zf.write(det.image_path, f"images/{Path(det.image_name).name}")
     buf.seek(0)
     return buf.getvalue()
 

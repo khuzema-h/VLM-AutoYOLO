@@ -24,6 +24,7 @@
     "draw": "Draw",
     "bbox": "BBox",
     "mask": "Mask",
+    "labels": "Labels",
     "themeLight": "Switch to light mode",
     "themeDark": "Switch to dark mode",
     "themeSystem": "Follow system theme"
@@ -235,7 +236,9 @@
     "imageCount": "Images",
     "boxCount": "Boxes",
     "exportDataset": "Export Dataset ({{count}} images)",
-    "exportHint": "Edits are saved automatically. Rename classes above if needed, then export.",
+    "exportProject": "Project (re-open in editor)",
+    "importProject": "Import project ZIP",
+    "exportHint": "Use Project export to move annotations to another machine. On the other machine, open BBox Review → Import project ZIP. YOLO/COCO formats are for training tools.",
     "labelMapping": "Class Names",
     "resetClassNames": "Reset names",
     "labelMappingHint": "Rename classes for export without changing stored annotations.",
@@ -328,6 +331,7 @@
   "datasetImport": {
     "title": "Import Dataset",
     "format": "Annotation Format",
+    "formatAutoyoloHint": "VLM-AutoYOLO project — re-open in BBox Review on another machine",
     "dropZip": "Drag a .zip file here or click to browse",
     "import": "Import",
     "uploading": "Uploading chunks…",

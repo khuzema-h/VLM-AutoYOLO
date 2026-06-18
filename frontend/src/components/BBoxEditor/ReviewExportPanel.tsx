@@ -10,6 +10,7 @@ import {
   mergeReviewLabelMap,
 } from "@/lib/reviewLabelMap";
 import { ReviewLabelMapping } from "./ReviewLabelMapping";
+import { DatasetImportModal } from "@/components/DatasetImportModal";
 import type { Detection } from "@/types";
 
 interface Props {
@@ -21,6 +22,7 @@ export function ReviewExportPanel({ items, categories }: Props) {
   const { t } = useTranslation();
   const { reviewLabelMap, setReviewLabelMap } = useAppStore();
   const [exporting, setExporting] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   const sourceLabels = useMemo(
     () => collectClassNamesFromDetections(items, categories),
@@ -49,8 +51,9 @@ export function ReviewExportPanel({ items, categories }: Props) {
     setExporting(true);
     try {
       const ids = items.map((d) => d.id);
-      const labelMap = buildExportLabelMap(reviewLabelMap);
+      const labelMap = format === "autoyolo" ? undefined : buildExportLabelMap(reviewLabelMap);
       const labels: Record<string, string> = {
+        autoyolo: "VLM_AutoYOLO_Project",
         yolo: "YOLO",
         "yolo-seg": "YOLO_Seg",
         coco: "COCO",
@@ -110,6 +113,8 @@ export function ReviewExportPanel({ items, categories }: Props) {
         disabled={items.length === 0 || exporting}
         menu={{
           items: [
+            { key: "autoyolo", label: t("bboxEditor.exportProject") },
+            { type: "divider" },
             { key: "yolo", label: "YOLO (.txt)" },
             { key: "yolo-seg", label: "YOLO Segmentation" },
             { key: "coco", label: "COCO (.json)" },
@@ -130,7 +135,15 @@ export function ReviewExportPanel({ items, categories }: Props) {
             : t("bboxEditor.exportDataset", { count: items.length })}
         </button>
       </Dropdown>
+      <button
+        type="button"
+        onClick={() => setImportOpen(true)}
+        className="w-full rounded border border-gray-200 bg-white py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+      >
+        {t("bboxEditor.importProject")}
+      </button>
       <p className="text-[10px] text-gray-400 leading-relaxed">{t("bboxEditor.exportHint")}</p>
+      <DatasetImportModal open={importOpen} onClose={() => setImportOpen(false)} defaultFormat="autoyolo" />
     </div>
   );
 }
